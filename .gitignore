@@ -48,5 +48,5 @@ node_modules/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-.vscode
+/.vscode/
 .env.example
