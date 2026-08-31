@@ -2,6 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/i18n'
 import type { Product, Set } from '@/payload-types'
+import { resolveLogo } from '@/lib/media'
 import HeaderClient from './HeaderClient'
 import type { CategoryNav, ContactData } from './types'
 
@@ -12,7 +13,7 @@ function isDoc<T>(value: T | number | null | undefined): value is T {
 export default async function Header({ locale }: { locale: Locale }) {
   const payload = await getPayload({ config })
 
-  const [categoriesResult, contact] = await Promise.all([
+  const [categoriesResult, contact, settings] = await Promise.all([
     // depth: 2 populates each category's `products`/`sets` relationships with the
     // full documents (not just ids) so the mega-panel can render names/slugs
     // directly, no extra round trip.
@@ -32,7 +33,17 @@ export default async function Header({ locale }: { locale: Locale }) {
       locale,
       overrideAccess: false,
     }),
+    // depth: 1 (the default) is enough to resolve `logo` to a full Media doc so
+    // resolveLogo() can read its url/sizes/mimeType.
+    payload.findGlobal({
+      slug: 'site-settings',
+      locale,
+      overrideAccess: false,
+    }),
   ])
+
+  const brandName = settings.brandName || 'Maison Dinamika'
+  const logo = resolveLogo(settings.logo, brandName)
 
   const categories: CategoryNav[] = categoriesResult.docs.map((category) => ({
     id: category.id,
@@ -53,5 +64,13 @@ export default async function Header({ locale }: { locale: Locale }) {
     email: contact.email ?? null,
   }
 
-  return <HeaderClient locale={locale} categories={categories} contact={contactData} />
+  return (
+    <HeaderClient
+      locale={locale}
+      categories={categories}
+      contact={contactData}
+      logo={logo}
+      brandName={brandName}
+    />
+  )
 }

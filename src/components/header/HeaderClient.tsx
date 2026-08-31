@@ -7,6 +7,8 @@ import type { MouseEvent } from 'react'
 import type { Locale } from '@/lib/i18n'
 import { getNavDict, paths } from '@/lib/i18n'
 import { useCart } from '@/lib/cart/CartContext'
+import type { LogoRef } from '@/lib/media'
+import Logo from '@/components/Logo'
 import AuthNavItem from './AuthNavItem'
 import ProduitsDropdown from './ProduitsDropdown'
 import MobileDrawer from './MobileDrawer'
@@ -26,10 +28,14 @@ export default function HeaderClient({
   locale,
   categories,
   contact,
+  logo,
+  brandName,
 }: {
   locale: Locale
   categories: CategoryNav[]
   contact: ContactData
+  logo: LogoRef | null
+  brandName: string
 }) {
   const nav = getNavDict(locale)
   const { count } = useCart()
@@ -79,14 +85,17 @@ export default function HeaderClient({
       }`}
     >
       <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-6">
-        <Link
-          href={paths.home(locale)}
-          className={`font-display text-xl tracking-wide ${
-            solid ? 'text-ink' : 'mix-blend-multiply'
-          }`}
-        >
-          Maison Dinamika
-        </Link>
+        <Logo
+          locale={locale}
+          logo={logo}
+          brandName={brandName}
+          // h-11 (44px) inside the h-20 (80px) bar — as large as a fine-lined mark
+          // can go before it crowds the bar's own padding; see the report on this
+          // turn's uploaded logo for why even this doesn't fully solve legibility.
+          heightClassName="h-11"
+          textClassName={`text-xl tracking-wide ${solid ? 'text-ink' : 'mix-blend-multiply'}`}
+          imageClassName={solid ? '' : 'mix-blend-multiply'}
+        />
 
         <nav className="hidden items-center gap-6 lg:flex" aria-label={nav.produits}>
           <Link href={paths.home(locale)} className={linkClass}>

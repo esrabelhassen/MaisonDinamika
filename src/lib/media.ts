@@ -35,6 +35,29 @@ export function allGalleryImages(
     .filter((ref): ref is ImageRef => ref !== null)
 }
 
+export type LogoRef = { url: string; alt: string; width: number; height: number; isSvg: boolean }
+
+/** SiteSettings' `logo` upload, resolved for the header/footer wordmark. Returns null
+ * when no logo is set (or the relationship didn't resolve to a document) — callers
+ * fall back to the text wordmark in that case, never a broken image. */
+export function resolveLogo(
+  logo: number | Media | null | undefined,
+  brandName: string,
+): LogoRef | null {
+  if (!isMediaDoc(logo)) return null
+  const isSvg = logo.mimeType === 'image/svg+xml'
+  // SVG is vector — Payload/sharp never generates raster derivatives for it (only
+  // the original file exists), and a small raster mark rarely needs anything
+  // bigger than the `thumbnail` derivative either.
+  const url = isSvg ? logo.url : (logo.sizes?.thumbnail?.url ?? logo.url)
+  if (!url) return null
+  // Fallback aspect ratio (3:1) only matters if Payload/sharp couldn't read real
+  // dimensions at all — keeps next/image's required width/height from crashing.
+  const width = (isSvg ? logo.width : (logo.sizes?.thumbnail?.width ?? logo.width)) ?? 3
+  const height = (isSvg ? logo.height : (logo.sizes?.thumbnail?.height ?? logo.height)) ?? 1
+  return { url, alt: logo.alt || brandName, width, height, isSvg }
+}
+
 export type BandImage = ImageRef & { width: number; height: number }
 
 /** Images for the /collection marquee bands — carries the real width/height (Payload
