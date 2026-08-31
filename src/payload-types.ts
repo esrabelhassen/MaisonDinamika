@@ -64,11 +64,18 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    customers: CustomerAuthOperations;
   };
   blocks: {};
   collections: {
     users: User;
+    customers: Customer;
     media: Media;
+    categories: Category;
+    products: Product;
+    sets: Set;
+    collections: Collection;
+    orders: Order;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -77,23 +84,39 @@ export interface Config {
   collectionsJoins: {};
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
+    customers: CustomersSelect<false> | CustomersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    sets: SetsSelect<false> | SetsSelect<true>;
+    collections: CollectionsSelect<false> | CollectionsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
-  fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
-  locale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('fr' | 'ar' | 'en') | ('fr' | 'ar' | 'en')[];
+  globals: {
+    homepage: Homepage;
+    apropos: Apropo;
+    contact: Contact;
+    'site-settings': SiteSetting;
+  };
+  globalsSelect: {
+    homepage: HomepageSelect<false> | HomepageSelect<true>;
+    apropos: AproposSelect<false> | AproposSelect<true>;
+    contact: ContactSelect<false> | ContactSelect<true>;
+    'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
+  };
+  locale: 'fr' | 'ar' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: User | Customer;
   jobs: {
     tasks: unknown;
     workflows: unknown;
@@ -117,12 +140,31 @@ export interface UserAuthOperations {
     password: string;
   };
 }
+export interface CustomerAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
+  id: number;
+  name?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -144,11 +186,72 @@ export interface User {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers".
+ */
+export interface Customer {
+  id: number;
+  fullName: string;
+  phone: string;
+  addresses?:
+    | {
+        label?: string | null;
+        line1: string;
+        city: string;
+        governorate:
+          | 'Ariana'
+          | 'Béja'
+          | 'Ben Arous'
+          | 'Bizerte'
+          | 'Gabès'
+          | 'Gafsa'
+          | 'Jendouba'
+          | 'Kairouan'
+          | 'Kasserine'
+          | 'Kébili'
+          | 'Le Kef'
+          | 'Mahdia'
+          | 'La Manouba'
+          | 'Médenine'
+          | 'Monastir'
+          | 'Nabeul'
+          | 'Sfax'
+          | 'Sidi Bouzid'
+          | 'Siliana'
+          | 'Sousse'
+          | 'Tataouine'
+          | 'Tozeur'
+          | 'Tunis'
+          | 'Zaghouan';
+        phone?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'customers';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
-  alt: string;
+  id: number;
+  alt?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -160,13 +263,228 @@ export interface Media {
   height?: number | null;
   focalX?: number | null;
   focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    hero?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  name: string;
+  slug?: string | null;
+  /**
+   * Ordre dans le menu Produits
+   */
+  order?: number | null;
+  products?: (number | Product)[] | null;
+  sets?: (number | Set)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  slug?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * En dinars, ex. 28.500
+   */
+  priceTND: number;
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  stock: number;
+  isNew?: boolean | null;
+  status?: ('draft' | 'published') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sets".
+ */
+export interface Set {
+  id: number;
+  name: string;
+  slug?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Prix propre à l’ensemble, indépendant de la somme des pièces
+   */
+  priceTND: number;
+  components?:
+    | {
+        product: number | Product;
+        qty: number;
+        id?: string | null;
+      }[]
+    | null;
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  stock: number;
+  isNew?: boolean | null;
+  status?: ('draft' | 'published') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections".
+ */
+export interface Collection {
+  id: number;
+  /**
+   * Titre affiché en surimpression sur les images
+   */
+  title: string;
+  slug?: string | null;
+  order?: number | null;
+  /**
+   * Couleur du texte en surimpression
+   */
+  overlayStyle?: ('light' | 'dark') | null;
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  orderNumber?: string | null;
+  customer: number | Customer;
+  status?: ('placee' | 'confirmee' | 'expediee' | 'livree' | 'retournee' | 'annulee') | null;
+  items?:
+    | {
+        itemType: 'product' | 'set';
+        product?: (number | null) | Product;
+        set?: (number | null) | Set;
+        nameSnapshot: string;
+        /**
+         * Prix figé au moment de l’ajout au panier
+         */
+        unitPriceTND: number;
+        qty: number;
+        id?: string | null;
+      }[]
+    | null;
+  governorate:
+    | 'Ariana'
+    | 'Béja'
+    | 'Ben Arous'
+    | 'Bizerte'
+    | 'Gabès'
+    | 'Gafsa'
+    | 'Jendouba'
+    | 'Kairouan'
+    | 'Kasserine'
+    | 'Kébili'
+    | 'Le Kef'
+    | 'Mahdia'
+    | 'La Manouba'
+    | 'Médenine'
+    | 'Monastir'
+    | 'Nabeul'
+    | 'Sfax'
+    | 'Sidi Bouzid'
+    | 'Siliana'
+    | 'Sousse'
+    | 'Tataouine'
+    | 'Tozeur'
+    | 'Tunis'
+    | 'Zaghouan';
+  deliveryFeeTND?: number | null;
+  subtotalTND?: number | null;
+  totalTND?: number | null;
+  shippingAddress: {
+    fullName: string;
+    phone: string;
+    line1: string;
+    city: string;
+  };
+  notes?: string | null;
+  paymentMethod?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -183,21 +501,50 @@ export interface PayloadKv {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
+      } | null)
+    | ({
+        relationTo: 'customers';
+        value: number | Customer;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'categories';
+        value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'sets';
+        value: number | Set;
+      } | null)
+    | ({
+        relationTo: 'collections';
+        value: number | Collection;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: number | Customer;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -206,11 +553,16 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
-  user: {
-    relationTo: 'users';
-    value: string | User;
-  };
+  id: number;
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'customers';
+        value: number | Customer;
+      };
   key?: string | null;
   value?:
     | {
@@ -229,7 +581,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -240,6 +592,41 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "customers_select".
+ */
+export interface CustomersSelect<T extends boolean = true> {
+  fullName?: T;
+  phone?: T;
+  addresses?:
+    | T
+    | {
+        label?: T;
+        line1?: T;
+        city?: T;
+        governorate?: T;
+        phone?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -274,6 +661,156 @@ export interface MediaSelect<T extends boolean = true> {
   height?: T;
   focalX?: T;
   focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        hero?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories_select".
+ */
+export interface CategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  order?: T;
+  products?: T;
+  sets?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  priceTND?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  stock?: T;
+  isNew?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sets_select".
+ */
+export interface SetsSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  priceTND?: T;
+  components?:
+    | T
+    | {
+        product?: T;
+        qty?: T;
+        id?: T;
+      };
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  stock?: T;
+  isNew?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "collections_select".
+ */
+export interface CollectionsSelect<T extends boolean = true> {
+  title?: T;
+  slug?: T;
+  order?: T;
+  overlayStyle?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  customer?: T;
+  status?: T;
+  items?:
+    | T
+    | {
+        itemType?: T;
+        product?: T;
+        set?: T;
+        nameSnapshot?: T;
+        unitPriceTND?: T;
+        qty?: T;
+        id?: T;
+      };
+  governorate?: T;
+  deliveryFeeTND?: T;
+  subtotalTND?: T;
+  totalTND?: T;
+  shippingAddress?:
+    | T
+    | {
+        fullName?: T;
+        phone?: T;
+        line1?: T;
+        city?: T;
+      };
+  notes?: T;
+  paymentMethod?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -314,6 +851,204 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage".
+ */
+export interface Homepage {
+  id: number;
+  hero?: {
+    eyebrow?: string | null;
+    headline?: string | null;
+    sub?: string | null;
+    ctaLabel?: string | null;
+    ctaLink?: string | null;
+  };
+  nouveaute?: {
+    heading?: string | null;
+    mode?: ('auto' | 'manual') | null;
+    products?:
+      | (
+          | {
+              relationTo: 'products';
+              value: number | Product;
+            }
+          | {
+              relationTo: 'sets';
+              value: number | Set;
+            }
+        )[]
+      | null;
+    limit?: number | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apropos".
+ */
+export interface Apropo {
+  id: number;
+  title?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  images?:
+    | {
+        image?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact".
+ */
+export interface Contact {
+  id: number;
+  facebook?: string | null;
+  instagram?: string | null;
+  phone?: string | null;
+  email?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings".
+ */
+export interface SiteSetting {
+  id: number;
+  brandName?: string | null;
+  logo?: (number | null) | Media;
+  /**
+   * Livraison offerte au-dessus de ce montant (optionnel)
+   */
+  freeDeliveryThresholdTND?: number | null;
+  deliveryFees?:
+    | {
+        governorate:
+          | 'Ariana'
+          | 'Béja'
+          | 'Ben Arous'
+          | 'Bizerte'
+          | 'Gabès'
+          | 'Gafsa'
+          | 'Jendouba'
+          | 'Kairouan'
+          | 'Kasserine'
+          | 'Kébili'
+          | 'Le Kef'
+          | 'Mahdia'
+          | 'La Manouba'
+          | 'Médenine'
+          | 'Monastir'
+          | 'Nabeul'
+          | 'Sfax'
+          | 'Sidi Bouzid'
+          | 'Siliana'
+          | 'Sousse'
+          | 'Tataouine'
+          | 'Tozeur'
+          | 'Tunis'
+          | 'Zaghouan';
+        feeTND: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "homepage_select".
+ */
+export interface HomepageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        eyebrow?: T;
+        headline?: T;
+        sub?: T;
+        ctaLabel?: T;
+        ctaLink?: T;
+      };
+  nouveaute?:
+    | T
+    | {
+        heading?: T;
+        mode?: T;
+        products?: T;
+        limit?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "apropos_select".
+ */
+export interface AproposSelect<T extends boolean = true> {
+  title?: T;
+  body?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact_select".
+ */
+export interface ContactSelect<T extends boolean = true> {
+  facebook?: T;
+  instagram?: T;
+  phone?: T;
+  email?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "site-settings_select".
+ */
+export interface SiteSettingsSelect<T extends boolean = true> {
+  brandName?: T;
+  logo?: T;
+  freeDeliveryThresholdTND?: T;
+  deliveryFees?:
+    | T
+    | {
+        governorate?: T;
+        feeTND?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

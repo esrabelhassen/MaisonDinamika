@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Storefront-only globals. Scoped away from /admin — this file is imported exclusively
+   from src/app/(frontend)/layout.tsx, never from a layout the admin shares. */
+
+@layer base {
+  html {
+    @apply bg-paper text-ink;
+  }
+
+  body {
+    @apply font-body antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  /* Visible focus ring on every interactive element, everywhere in the storefront. */
+  :focus-visible {
+    @apply outline outline-2 outline-offset-2 outline-glaze;
+  }
+}
+
+/* Hero scroll-hint: the falling line, ported from the prototype's @keyframes drop. */
+@keyframes hero-scroll-hint {
+  0% {
+    top: -2rem;
+  }
+  60%,
+  100% {
+    top: 2rem;
+  }
+}
+
+/* Collection marquee: the track holds the image set twice back-to-back and slides
+   by exactly one copy's width, so the wrap is invisible. --marquee-dir flips the
+   sign for RTL (set inline per band from the locale's direction). */
+@keyframes collection-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(var(--marquee-dir, -1) * 50%));
+  }
+}

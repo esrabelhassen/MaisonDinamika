@@ -1,18 +1,46 @@
 import React from 'react'
-import './styles.css'
+import { headers } from 'next/headers'
+import { Fraunces, Inter } from 'next/font/google'
+import { defaultLocale, dirFor, isValidLocale } from '@/lib/i18n'
+import { CartProvider } from '@/lib/cart/CartContext'
+import { AuthProvider } from '@/lib/auth/AuthContext'
+import './globals.css'
+
+// Self-hosted at build time (next/font downloads + serves the font files itself) —
+// no runtime request to Google's CDN, so the storefront still renders offline.
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-display',
+  display: 'swap',
+})
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-body',
+  display: 'swap',
+})
 
 export const metadata = {
-  description: 'A blank template using Payload in a Next.js app.',
-  title: 'Payload Blank Template',
+  title: 'Maison Dinamika',
+  description: 'Vaisselle et art de la table.',
 }
 
-export default async function RootLayout(props: { children: React.ReactNode }) {
-  const { children } = props
+// This is a route-group root layout (it owns <html>/<body>) separate from the
+// (payload) admin's own root layout — Tailwind is imported only here, so it never
+// touches /admin.
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const headerList = await headers()
+  // middleware.ts stamps these on every (frontend) request; fall back defensively
+  // in case a request ever reaches this layout without going through middleware.
+  const locale = headerList.get('x-locale') ?? defaultLocale
+  const dir = headerList.get('x-locale-dir') ?? dirFor(isValidLocale(locale) ? locale : defaultLocale)
 
   return (
-    <html lang="en">
+    <html lang={locale} dir={dir} className={`${fraunces.variable} ${inter.variable}`}>
       <body>
-        <main>{children}</main>
+        <AuthProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthProvider>
       </body>
     </html>
   )
