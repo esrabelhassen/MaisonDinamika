@@ -75,13 +75,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
+      {/* Hardcoded, not from the `homepage.hero` CMS field: the hero is the very
+          first thing rendered, and it should never come up blank just because a
+          given database (a fresh deploy, a different environment) doesn't have
+          this content filled in yet. `homepage.hero.*` still exists in the
+          schema and is still editable in /admin, but nothing reads it anymore —
+          only worth restoring if you want it CMS-editable again later. */}
       <Hero
         locale={locale}
-        eyebrow={homepage.hero?.eyebrow}
-        headline={homepage.hero?.headline}
-        sub={homepage.hero?.sub}
-        ctaLabel={homepage.hero?.ctaLabel}
-        ctaLink={homepage.hero?.ctaLink}
+        eyebrow="L’art de la table"
+        headline="Composez. Harmonisez. Recevez."
+        sub="Des pièces soigneusement sélectionnées pour créer une table qui vous ressemble, à la pièce ou en set."
+        ctaLabel="Découvrir la collection"
+        ctaLink="/collection"
       />
       <Nouveaute
         locale={locale}
