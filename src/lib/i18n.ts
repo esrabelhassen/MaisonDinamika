@@ -126,6 +126,20 @@ type NavDict = {
   enregistrementEnCours: string
   // Collection showcase
   collectionBientot: string
+  // Footer promo cards + coming-soon pages
+  parrainageTitre: string
+  parrainageAccroche: string
+  parrainageCta: string
+  espaceProTitre: string
+  espaceProAccroche: string
+  espaceProCta: string
+  fideliteTitre: string
+  fideliteAccroche: string
+  fideliteCta: string
+  bientotDisponible: string
+  bientotDisponibleTexte: string
+  retourAlAccueil: string
+  droitsReserves: string
 }
 
 // FR is the only real copy for now. ar/en intentionally fall back to it — this is
@@ -234,6 +248,19 @@ const fr: NavDict = {
   motDePasseTropCourt: 'Le mot de passe doit contenir au moins 8 caractères.',
   enregistrementEnCours: 'Enregistrement…',
   collectionBientot: 'Bientôt.',
+  parrainageTitre: 'Parrainage',
+  parrainageAccroche: 'Partagez Maison Dinamika et profitez d’avantages.',
+  parrainageCta: 'Parrainer un proche',
+  espaceProTitre: 'Espace PRO',
+  espaceProAccroche: 'Des solutions pensées pour les professionnels.',
+  espaceProCta: 'Découvrir',
+  fideliteTitre: 'Fidélité',
+  fideliteAccroche: 'Cumulez vos avantages et profitez de vos achats.',
+  fideliteCta: 'Découvrir',
+  bientotDisponible: 'Bientôt disponible',
+  bientotDisponibleTexte: 'Cette page est en cours de préparation — revenez bientôt pour la découvrir.',
+  retourAlAccueil: 'Retour à l’accueil',
+  droitsReserves: 'Tous droits réservés.',
 }
 
 const dictionaries: Record<Locale, NavDict> = {
@@ -265,4 +292,7 @@ export const paths = {
   compteProfil: (l: Locale) => `/${l}/compte/profil`,
   compteCommande: (l: Locale, orderNumber: string) => `/${l}/compte/commande/${orderNumber}`,
   confirmation: (l: Locale, orderNumber: string) => `/${l}/commande/confirmation/${orderNumber}`,
+  parrainage: (l: Locale) => `/${l}/parrainage`,
+  espacePro: (l: Locale) => `/${l}/espace-pro`,
+  fidelite: (l: Locale) => `/${l}/fidelite`,
 }

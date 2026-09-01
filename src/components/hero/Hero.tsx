@@ -37,7 +37,6 @@ function resolveCtaHref(locale: Locale, ctaLink: string) {
 export default function Hero({ locale, eyebrow, headline, sub, ctaLabel, ctaLink }: HeroProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
-  const copyRef = useRef<HTMLDivElement>(null)
   const hintRef = useRef<HTMLDivElement>(null)
   const [contextLost, setContextLost] = useState(false)
 
@@ -63,19 +62,13 @@ export default function Hero({ locale, eyebrow, headline, sub, ctaLabel, ctaLink
       return Math.min(Math.max(-rect.top / total, 0), 1)
     }
 
-    // Copy/hint react to scroll via direct style writes (not React state) so this
-    // runs every animation frame without triggering re-renders.
-    function updateCopyStyles(raw: number) {
-      const copy = copyRef.current
+    // The hero copy is static — it never moves or rescales with scroll (only the
+    // 3D scene behind it is scroll-driven). The "Scroll" hint is the one thing
+    // that still reacts to scroll, fading out over the first slice of it, via a
+    // direct style write (not React state) so this runs every animation frame
+    // without triggering re-renders.
+    function updateHintStyle(raw: number) {
       const hint = hintRef.current
-      if (copy) {
-        // Text itself is always fully opaque (never gated behind scroll — an
-        // opacity-hidden LCP element is exactly what tanks the LCP score). The
-        // "reveal" is a small settle-in motion over the first slice of scroll.
-        const t = Math.min(Math.max(raw / 0.1, 0), 1)
-        const eased = t * t * (3 - 2 * t)
-        copy.style.transform = `translateY(${(1 - eased) * 14}px) scale(${0.985 + eased * 0.015})`
-      }
       if (hint) {
         const t = Math.min(Math.max(raw / 0.15, 0), 1)
         hint.style.opacity = String(1 - t)
@@ -84,9 +77,8 @@ export default function Hero({ locale, eyebrow, headline, sub, ctaLabel, ctaLink
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    if (prefersReducedMotion && copyRef.current) {
-      copyRef.current.style.transform = 'translateY(0) scale(1)'
-      if (hintRef.current) hintRef.current.style.display = 'none'
+    if (prefersReducedMotion && hintRef.current) {
+      hintRef.current.style.display = 'none'
     }
 
     async function init() {
@@ -110,12 +102,12 @@ export default function Hero({ locale, eyebrow, headline, sub, ctaLabel, ctaLink
         return
       }
 
-      // Piggyback the copy/hint style updates on the same cadence as the 3D loop by
-      // polling via a lightweight rAF here too — kept separate from heroScene's own
-      // loop so the (framework-agnostic) scene module never has to know about our
-      // DOM copy elements.
+      // Piggyback the hint's fade on the same cadence as the 3D loop by polling
+      // via a lightweight rAF here too — kept separate from heroScene's own loop
+      // so the (framework-agnostic) scene module never has to know about our DOM
+      // copy elements.
       function cosmeticLoop() {
-        updateCopyStyles(getProgress())
+        updateHintStyle(getProgress())
         cosmeticRaf = requestAnimationFrame(cosmeticLoop)
       }
 
@@ -158,58 +150,81 @@ export default function Hero({ locale, eyebrow, headline, sub, ctaLabel, ctaLink
 
   return (
     <div ref={wrapRef} data-hero className="relative -mt-20 h-[260vh] md:h-[360vh]">
-      <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-0 h-screen w-screen" />
+      {/* ONE shared `sticky top-0 h-screen` box holding the canvas AND the copy,
+          not two independent sticky siblings. `position: sticky` still occupies
+          its box in normal flow (unlike `fixed`/`absolute`, which don't) — so an
+          earlier version of this fix that made the canvas its own top-level
+          `sticky h-screen` sibling ended up adding a full extra viewport height
+          to this wrapper's flow, in front of the copy's own sticky block. That
+          pushed the copy's natural flow position down by that same amount,
+          delaying exactly when ITS sticky offset engages — which is what made
+          the text visibly scroll with the page instead of staying put. Nesting
+          both inside one sticky box (canvas absolutely filling it, copy laid
+          out normally inside it) avoids adding any extra flow height, so this
+          still un-sticks and scrolls away — canvas AND copy together — once the
+          wrapper's own bottom edge is reached (fixing the original bug: the
+          canvas used to be `fixed`, with nothing to stop it painting over
+          everything below the hero, including the footer). */}
+      <div className="sticky top-0 h-screen overflow-hidden">
+        <canvas ref={canvasRef} className="pointer-events-none absolute inset-0 z-0 h-full w-full" />
 
-      {contextLost && (
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-0 z-0 flex items-center justify-center bg-gradient-to-b from-glaze-mid via-glaze-deep to-ink"
-        >
-          <div className="h-40 w-40 rounded-full bg-[radial-gradient(circle_at_45%_40%,#C8CCD5,#77899E_55%,#363F49)] opacity-70 sm:h-56 sm:w-56" />
-        </div>
-      )}
+        {contextLost && (
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center bg-gradient-to-b from-glaze-mid via-glaze-deep to-ink"
+          >
+            <div className="h-40 w-40 rounded-full bg-[radial-gradient(circle_at_45%_40%,#C8CCD5,#77899E_55%,#363F49)] opacity-70 sm:h-56 sm:w-56" />
+          </div>
+        )}
 
-      <div className="sticky top-0 grid h-screen place-items-center">
-        <div ref={copyRef} className="relative z-[2] px-6 text-center">
-          {eyebrow && (
-            <div className="mb-4 text-xs uppercase tracking-[0.28em] text-glaze">{eyebrow}</div>
-          )}
-          {headline && (
-            <h1 className="font-display text-[clamp(38px,7vw,86px)] font-normal leading-[0.98] tracking-tight text-ink">
-              {renderHeadline(headline)}
-            </h1>
-          )}
-          {sub && (
-            <p className="mx-auto mt-5 max-w-[34ch] text-[15px] leading-relaxed text-muted">{sub}</p>
-          )}
-          {ctaLabel && ctaLink && (
-            <div className="pointer-events-auto mt-7">
-              {/^https?:\/\//.test(ctaLink) ? (
-                <a
-                  href={ctaLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
-                >
-                  {ctaLabel}
-                </a>
-              ) : (
-                <Link
-                  href={resolveCtaHref(locale, ctaLink)}
-                  className="inline-block rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
-                >
-                  {ctaLabel}
-                </Link>
-              )}
-            </div>
-          )}
+        <div className="relative z-[2] grid h-full place-items-center">
+          <div className="px-6 text-center">
+            {eyebrow && (
+              <div className="mb-4 text-base uppercase tracking-[0.28em] text-glaze sm:text-lg">{eyebrow}</div>
+            )}
+            {headline && (
+              <h1 className="font-display text-[clamp(30px,5vw,60px)] font-normal leading-[0.98] tracking-tight text-ink">
+                {renderHeadline(headline)}
+              </h1>
+            )}
+            {sub && (
+              <p className="mx-auto mt-5 max-w-[34ch] text-lg leading-relaxed text-muted sm:text-xl">{sub}</p>
+            )}
+            {ctaLabel && ctaLink && (
+              <div className="pointer-events-auto mt-7">
+                {/^https?:\/\//.test(ctaLink) ? (
+                  <a
+                    href={ctaLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+                  >
+                    {ctaLabel}
+                  </a>
+                ) : (
+                  <Link
+                    href={resolveCtaHref(locale, ctaLink)}
+                    className="inline-block rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+                  >
+                    {ctaLabel}
+                  </Link>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
+      {/* Fades to opacity 0 within the first 15% of scroll (see updateHintStyle),
+          long before the hero's own bounds end, so it's never visibly bleeding
+          past it like the canvas was — but it's still a `fixed` element sitting
+          there for the rest of the page regardless, so `pointer-events-none`
+          keeps its (invisible) hit area from ever intercepting a click on
+          whatever's really underneath it further down the page. */}
       <div
         ref={hintRef}
         aria-hidden
-        className="fixed bottom-8 left-1/2 z-[3] flex -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted motion-reduce:hidden"
+        className="pointer-events-none fixed bottom-8 left-1/2 z-[3] flex -translate-x-1/2 flex-col items-center gap-2 text-xs uppercase tracking-[0.22em] text-muted motion-reduce:hidden"
       >
         <span>Scroll</span>
         <span className="relative h-8 w-px overflow-hidden bg-black/10">

@@ -84,19 +84,28 @@ export default function HeaderClient({
         solid ? 'border-b border-glaze-light bg-paper' : 'border-b border-transparent bg-transparent'
       }`}
     >
-      <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-6">
-        <Logo
-          locale={locale}
-          logo={logo}
-          brandName={brandName}
-          // h-11 (44px) inside the h-20 (80px) bar — as large as a fine-lined mark
-          // can go before it crowds the bar's own padding; see the report on this
-          // turn's uploaded logo for why even this doesn't fully solve legibility.
-          heightClassName="h-11"
-          textClassName={`text-xl tracking-wide ${solid ? 'text-ink' : 'mix-blend-multiply'}`}
-          imageClassName={solid ? '' : 'mix-blend-multiply'}
-        />
+      {/* Pinned to the header's own corner (the header is already `fixed`, which
+          is what lets an `absolute` child position against it) — deliberately
+          OUTSIDE the centered max-w-6xl/px-6 row below, so it sits in the actual
+          page corner rather than the nav's centered reading column, and its
+          (large) size never affects that row's flex layout at all. */}
+      <Logo
+        locale={locale}
+        logo={logo}
+        brandName={brandName}
+        heightClassName="h-24 lg:h-48"
+        textClassName={`text-xl tracking-wide ${solid ? 'text-ink' : 'mix-blend-multiply'}`}
+        imageClassName={solid ? '' : 'mix-blend-multiply'}
+        linkClassName="absolute start-4 top-1 z-10"
+      />
 
+      {/* ps-6/pe-6 (not px-6): the corner logo is wide enough at its lg: size
+          (h-48, ~192px, roughly square) to physically overlap the first nav
+          link's hit area if the nav row started at the usual px-6 inset — the
+          large lg:ps-64 reserves enough start-side room to clear it. Confirmed
+          by clicking "Accueil" after this change; before it, the click landed
+          on the logo instead of navigating. */}
+      <div className="mx-auto flex h-full max-w-6xl items-center justify-end ps-6 pe-6 lg:ps-64">
         <nav className="hidden items-center gap-6 lg:flex" aria-label={nav.produits}>
           <Link href={paths.home(locale)} className={linkClass}>
             {nav.accueil}

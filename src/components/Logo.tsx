@@ -20,8 +20,9 @@ export default function Logo({
    * back to the text wordmark, never a broken image. */
   logo: LogoRef | null
   brandName: string
-  /** Tailwind height utility for the rendered mark, e.g. "h-9" — width follows the
-   * logo's real aspect ratio, so nothing stretches or shifts layout. */
+  /** Tailwind height utility for the rendered mark — a plain "h-9" or a responsive
+   * "h-8 lg:h-11". Width always follows the logo's real aspect ratio (w-auto),
+   * so nothing stretches, squashes, or shifts layout at any breakpoint. */
   heightClassName: string
   /** Classes for the fallback text wordmark (font-display is applied here always). */
   textClassName: string
