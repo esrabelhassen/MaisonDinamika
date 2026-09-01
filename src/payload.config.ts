@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 import { buildConfig } from 'payload'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import sharp from 'sharp'
 
 import { Users } from './collections/Users'
@@ -40,4 +41,16 @@ export default buildConfig({
   },
   sharp,
   typescript: { outputFile: path.resolve(dirname, 'payload-types.ts') },
+  // Vercel's servers have no writable/persistent local disk — uploads (the Media
+  // collection) default to writing files to disk, which fails there. This routes
+  // uploads to Vercel Blob storage instead, everywhere (local dev included), so
+  // behaviour is consistent — it only actually works once BLOB_READ_WRITE_TOKEN
+  // is set (see the Vercel Storage tab → Blob store, which auto-injects this on
+  // the deployed app; copy the same value into local .env for local uploads).
+  plugins: [
+    vercelBlobStorage({
+      collections: { media: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 })
