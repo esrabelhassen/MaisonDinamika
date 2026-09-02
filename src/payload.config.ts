@@ -51,6 +51,12 @@ export default buildConfig({
     vercelBlobStorage({
       collections: { media: true },
       token: process.env.BLOB_READ_WRITE_TOKEN,
+      // Vercel's serverless functions cap request bodies at 4.5MB — routing the
+      // upload itself through the function (the default) means anything bigger
+      // than that fails with "Your request was too large to submit
+      // successfully." This uploads straight from the browser to Vercel Blob
+      // instead, bypassing that function-body limit entirely.
+      clientUploads: true,
     }),
   ],
 })
