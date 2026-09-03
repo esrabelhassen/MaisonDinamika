@@ -41,15 +41,3 @@
     top: 2rem;
   }
 }
-
-/* Collection marquee: the track holds the image set twice back-to-back and slides
-   by exactly one copy's width, so the wrap is invisible. --marquee-dir flips the
-   sign for RTL (set inline per band from the locale's direction). */
-@keyframes collection-marquee {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(calc(var(--marquee-dir, -1) * 50%));
-  }
-}

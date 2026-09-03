@@ -60,10 +60,10 @@ export function resolveLogo(
 
 export type BandImage = ImageRef & { width: number; height: number }
 
-/** Images for the /collection marquee bands — carries the real width/height (Payload
- * stores both on every upload) so the band can size each image by aspect ratio at a
- * fixed height, and so the total row width can be computed without waiting for the
- * images to actually load in the browser. */
+/** Images for a /collection entry — carries the real width/height (Payload stores
+ * both on every upload) even though the carousel only ever shows the first one
+ * (`fill` + `object-cover`, no aspect-ratio math needed there); kept on the type
+ * in case a future admin-configurable slide picker needs the rest of the set. */
 export function collectionBandImages(
   images: { image: number | Media }[] | null | undefined,
   fallbackAlt: string,

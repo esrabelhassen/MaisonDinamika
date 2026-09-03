@@ -126,6 +126,8 @@ type NavDict = {
   enregistrementEnCours: string
   // Collection showcase
   collectionBientot: string
+  collectionPrecedente: string
+  collectionSuivante: string
   // Footer promo cards + coming-soon pages
   parrainageTitre: string
   parrainageAccroche: string
@@ -248,6 +250,8 @@ const fr: NavDict = {
   motDePasseTropCourt: 'Le mot de passe doit contenir au moins 8 caractères.',
   enregistrementEnCours: 'Enregistrement…',
   collectionBientot: 'Bientôt.',
+  collectionPrecedente: 'Collection précédente',
+  collectionSuivante: 'Collection suivante',
   parrainageTitre: 'Parrainage',
   parrainageAccroche: 'Partagez Maison Dinamika et profitez d’avantages.',
   parrainageCta: 'Parrainer un proche',

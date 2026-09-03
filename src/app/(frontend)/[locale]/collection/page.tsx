@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
-import { dirFor, isValidLocale, getNavDict } from '@/lib/i18n'
+import { isValidLocale, getNavDict } from '@/lib/i18n'
 import { getCollections } from '@/lib/queries'
-import CollectionBand from '@/components/collection/CollectionBand'
+import CollectionCarousel from '@/components/collection/CollectionCarousel'
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
@@ -14,10 +14,9 @@ export default async function CollectionPage({ params }: { params: Promise<{ loc
   if (!isValidLocale(locale)) notFound()
 
   const nav = getNavDict(locale)
-  const dir = dirFor(locale)
   // Belt-and-suspenders: `images` has minRows:1 in the schema, so this should
-  // never happen via the admin, but a band with no images would otherwise render
-  // a broken/blank marquee.
+  // never happen via the admin, but a collection with no images would otherwise
+  // have no photo to show as its carousel slide.
   const collections = (await getCollections(locale)).filter((c) => c.images.length > 0)
 
   if (collections.length === 0) {
@@ -29,16 +28,11 @@ export default async function CollectionPage({ params }: { params: Promise<{ loc
   }
 
   return (
-    <div className="flex flex-col gap-16 py-16 sm:gap-24 sm:py-24">
-      {collections.map((collection) => (
-        <CollectionBand
-          key={collection.id}
-          title={collection.title}
-          overlayStyle={collection.overlayStyle}
-          images={collection.images}
-          dir={dir}
-        />
-      ))}
+    <div className="py-16 sm:py-24">
+      <CollectionCarousel
+        collections={collections}
+        labels={{ previous: nav.collectionPrecedente, next: nav.collectionSuivante }}
+      />
     </div>
   )
 }
