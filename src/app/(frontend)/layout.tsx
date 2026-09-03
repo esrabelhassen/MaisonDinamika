@@ -5,6 +5,7 @@ import { defaultLocale, dirFor, isValidLocale } from '@/lib/i18n'
 import { CartProvider } from '@/lib/cart/CartContext'
 import { AuthProvider } from '@/lib/auth/AuthContext'
 import DreamyBackground from '@/components/ambient/DreamyBackground'
+import CeramicSilhouettes from '@/components/ambient/CeramicSilhouettes'
 import './globals.css'
 
 // Self-hosted at build time (next/font downloads + serves the font files itself) —
@@ -43,6 +44,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             a negative z-index here is enough to sit behind the transparent hero
             canvas without touching any hero rig file. */}
         <DreamyBackground />
+        {/* Above the blooms, below page content; fades in once the home route's
+            hero has fully scrolled past — see the component for the exclusion
+            logic (no hero file imported or modified). */}
+        <CeramicSilhouettes />
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>

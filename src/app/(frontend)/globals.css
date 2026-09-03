@@ -78,3 +78,55 @@
     opacity: 1;
   }
 }
+
+/* CeramicSilhouettes ambient line-dishes (src/components/ambient/CeramicSilhouettes.tsx).
+   Five independent cycles, all 68–124s — deliberately slower than every
+   dreamy-drift-* above (37–58s) so the two ambient layers never fall into step.
+   Translate + rotate + a barely-there scale breath only, no filter/layout work.
+   motion-reduce disables the Tailwind `animate-[...]` utility on each shape,
+   freezing it at this 0%/100% resting frame — a still arrangement, not a pause. */
+@keyframes ceramic-drift-1 {
+  0%,
+  100% {
+    transform: translate(-2%, -1.5%) rotate(-3deg) scale(1);
+  }
+  50% {
+    transform: translate(2.5%, 2%) rotate(2deg) scale(1.04);
+  }
+}
+@keyframes ceramic-drift-2 {
+  0%,
+  100% {
+    transform: translate(2%, 1%) rotate(4deg) scale(1.03);
+  }
+  50% {
+    transform: translate(-2.5%, -2%) rotate(-2deg) scale(0.97);
+  }
+}
+@keyframes ceramic-drift-3 {
+  0%,
+  100% {
+    transform: translate(-1.5%, 2%) rotate(2deg) scale(1);
+  }
+  50% {
+    transform: translate(2%, -2.5%) rotate(-4deg) scale(1.05);
+  }
+}
+@keyframes ceramic-drift-4 {
+  0%,
+  100% {
+    transform: translate(1.5%, -2%) rotate(-2.5deg) scale(1.02);
+  }
+  50% {
+    transform: translate(-2%, 2.5%) rotate(3deg) scale(0.98);
+  }
+}
+@keyframes ceramic-drift-5 {
+  0%,
+  100% {
+    transform: translate(-2%, 1.5%) rotate(3deg) scale(1);
+  }
+  50% {
+    transform: translate(2%, -1.5%) rotate(-3deg) scale(1.03);
+  }
+}
