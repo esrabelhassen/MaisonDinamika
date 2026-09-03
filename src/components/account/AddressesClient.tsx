@@ -161,7 +161,7 @@ export default function AddressesClient({
         <button
           type="button"
           onClick={openAdd}
-          className="self-start rounded-full border border-glaze bg-transparent px-6 py-2.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
+          className="self-start rounded-full border border-glaze bg-transparent px-6 py-2.5 text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] motion-reduce:transition-none"
         >
           {nav.ajouterUneAdresse}
         </button>
@@ -207,7 +207,7 @@ export default function AddressesClient({
                 disabled={submitting}
                 onChange={(e) => setForm((f) => ({ ...f, governorate: e.target.value }))}
                 aria-invalid={!!errors.governorate}
-                className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
+                className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-all duration-300 focus:border-glaze focus:shadow-[0_0_0_3px_rgba(94,115,134,0.15)] disabled:opacity-60 motion-reduce:transition-none"
               >
                 <option value="">—</option>
                 {governorates.map((g) => (
@@ -234,7 +234,7 @@ export default function AddressesClient({
               type="button"
               onClick={handleSave}
               disabled={submitting}
-              className="rounded-full border border-glaze bg-transparent px-6 py-2.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+              className="rounded-full border border-glaze bg-transparent px-6 py-2.5 text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
             >
               {submitting ? nav.enregistrementEnCours : nav.enregistrer}
             </button>

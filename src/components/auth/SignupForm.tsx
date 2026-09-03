@@ -113,7 +113,7 @@ export default function SignupForm({ locale, redirectTarget }: { locale: Locale;
               onKeyDown={handleKeyDown}
               aria-invalid={!!field.error}
               aria-describedby={field.error ? `${field.id}-error` : undefined}
-              className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
+              className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-all duration-300 focus:border-glaze focus:shadow-[0_0_0_3px_rgba(94,115,134,0.15)] disabled:opacity-60 motion-reduce:transition-none"
             />
             {field.error && (
               <p id={`${field.id}-error`} className="text-sm text-rim-brown">
@@ -127,7 +127,7 @@ export default function SignupForm({ locale, redirectTarget }: { locale: Locale;
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
-          className="mt-2 rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+          className="mt-2 rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
         >
           {submitting ? nav.creationEnCours : nav.creerUnCompte}
         </button>

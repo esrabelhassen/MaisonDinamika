@@ -24,7 +24,7 @@ export default function ComingSoon({
       <p className="mt-8 max-w-[50ch] text-lg leading-relaxed text-muted">{text}</p>
       <Link
         href={paths.home(locale)}
-        className="mt-10 inline-block rounded-full border border-glaze bg-transparent px-7 py-3.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
+        className="mt-10 inline-block rounded-full border border-glaze bg-transparent px-7 py-3.5 text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] motion-reduce:transition-none"
       >
         {nav.retourAlAccueil}
       </Link>

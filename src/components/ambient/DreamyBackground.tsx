@@ -22,14 +22,17 @@
 // still, soft gradient rather than a moving one.
 //
 // Colors: `surface` (warm ivory/cream) and the new single-purpose `dream-gold`
-// token (pale gold/sand) carry the warmth; `glaze-light` appears once, at a much
-// lower peak alpha, as the "faint slate-blue whisper" the brief allows — the crisp
-// `glaze`/`glaze-deep` accent itself is never used here, so blue stays reserved
-// for foreground buttons/links/focus, not the haze. Peak alphas (0.55/0.5/0.18)
-// were chosen and contrast-checked so that even directly over the brightest overlap
-// of all three blooms, `ink` and `muted` text sitting on the plain `paper` page
-// background still clears WCAG AA (~11.7:1 and ~5:1 respectively) — see the PR
-// notes for the full sRGB contrast calculation.
+// token (pale gold/sand) carry the warmth; `glaze-light` appears once, at a
+// lower peak alpha, as the "faint slate-blue whisper" the brief allows — the
+// crisp `glaze`/`glaze-deep` accent itself is never used here, so blue stays
+// reserved for foreground buttons/links/focus, not the haze.
+//
+// Peak alphas (0.62/0.58/0.22 — turned up a notch from the original 0.55/0.5/0.18
+// for more presence, per the "play more with the background" pass) were
+// re-contrast-checked at the absolute worst case: all three blooms overlapping
+// at once, sequentially alpha-composited over `paper`. That blend comes out to
+// ≈ rgb(227,218,194); `ink` on it is ≈9.9:1 and `muted` ≈4.78:1 — both still
+// clear WCAG AA (4.5:1), so the extra presence didn't cost any legibility.
 export default function DreamyBackground() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -37,21 +40,21 @@ export default function DreamyBackground() {
       <div
         className="absolute -left-[15vmax] -top-[25vmax] h-[85vmax] w-[85vmax] animate-[dreamy-drift-a_46s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
         style={{
-          background: 'radial-gradient(circle, rgba(234,225,210,0.55) 0%, rgba(234,225,210,0) 70%)',
+          background: 'radial-gradient(circle, rgba(234,225,210,0.62) 0%, rgba(234,225,210,0) 70%)',
         }}
       />
       {/* B: pale gold/sand — dream-gold #E9D8A8 */}
       <div
         className="absolute -bottom-[20vmax] -right-[10vmax] h-[75vmax] w-[75vmax] animate-[dreamy-drift-b_58s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
         style={{
-          background: 'radial-gradient(circle, rgba(233,216,168,0.5) 0%, rgba(233,216,168,0) 70%)',
+          background: 'radial-gradient(circle, rgba(233,216,168,0.58) 0%, rgba(233,216,168,0) 70%)',
         }}
       />
-      {/* C: faint slate-blue whisper — glaze-light #C8CCD5, low peak alpha on purpose */}
+      {/* C: faint slate-blue whisper — glaze-light #C8CCD5, kept low-alpha on purpose */}
       <div
         className="absolute -top-[5vmax] -right-[5vmax] h-[60vmax] w-[60vmax] animate-[dreamy-drift-c_37s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
         style={{
-          background: 'radial-gradient(circle, rgba(200,204,213,0.18) 0%, rgba(200,204,213,0) 70%)',
+          background: 'radial-gradient(circle, rgba(200,204,213,0.22) 0%, rgba(200,204,213,0) 70%)',
         }}
       />
     </div>

@@ -109,7 +109,7 @@ export default function CollectionCarousel({
             type="button"
             onClick={prev}
             aria-label={labels.previous}
-            className="absolute left-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-paper/85 text-ink shadow-sm backdrop-blur-sm transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
+            className="absolute left-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-paper/85 text-ink shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] motion-reduce:transition-none"
           >
             <ChevronIcon direction="left" />
           </button>
@@ -117,7 +117,7 @@ export default function CollectionCarousel({
             type="button"
             onClick={next}
             aria-label={labels.next}
-            className="absolute right-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-paper/85 text-ink shadow-sm backdrop-blur-sm transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
+            className="absolute right-4 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-paper/85 text-ink shadow-sm backdrop-blur-sm transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] motion-reduce:transition-none"
           >
             <ChevronIcon direction="right" />
           </button>

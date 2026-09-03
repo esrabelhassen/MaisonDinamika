@@ -74,8 +74,15 @@ export default function HeaderClient({
     target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
   }
 
-  const linkClass = `rounded-sm px-1 py-2 transition-colors motion-reduce:transition-none ${
-    solid ? 'text-ink hover:text-glaze-deep' : 'mix-blend-multiply hover:opacity-80'
+  // Solid state gets a premium slide-in underline (an `after:` pseudo-element
+  // scaled from 0 on hover) on top of the existing color transition; skipped in
+  // the transparent-over-hero state, which already has its own opacity-based
+  // hover cue and sits on ever-changing dish imagery a bg-color bar wouldn't
+  // reliably read against.
+  const linkClass = `relative rounded-sm px-1 py-2 transition-colors motion-reduce:transition-none ${
+    solid
+      ? "text-ink after:absolute after:inset-x-1 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-glaze-deep after:transition-transform after:duration-300 after:content-[''] hover:text-glaze-deep hover:after:scale-x-100 motion-reduce:after:transition-none"
+      : 'mix-blend-multiply hover:opacity-80'
   }`
 
   return (

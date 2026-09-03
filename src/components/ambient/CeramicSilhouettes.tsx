@@ -60,8 +60,11 @@ function usePastHero(pathname: string | null): boolean {
 }
 
 // Stroke opacity is the one dial to tune if this and DreamyBackground ever feel
-// like too much together — see the component-level comment above.
-const STROKE_OPACITY = 0.06
+// like too much together — see the component-level comment above. Turned up
+// from the original 0.06 for more presence (the "play more with the
+// background" pass); still a hairline stroke on decorative shapes, so this
+// has no meaningful effect on text contrast anywhere it crosses a heading.
+const STROKE_OPACITY = 0.11
 
 type Shape = {
   path: string

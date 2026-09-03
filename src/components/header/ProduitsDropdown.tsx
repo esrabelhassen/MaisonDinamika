@@ -55,8 +55,10 @@ export default function ProduitsDropdown({
         aria-expanded={open}
         aria-controls="produits-mega-panel"
         onClick={toggle}
-        className={`rounded-sm px-1 py-2 transition-colors motion-reduce:transition-none ${
-          solid ? 'text-ink hover:text-glaze-deep' : 'mix-blend-multiply hover:opacity-80'
+        className={`relative rounded-sm px-1 py-2 transition-colors motion-reduce:transition-none ${
+          solid
+            ? "text-ink after:absolute after:inset-x-1 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-glaze-deep after:transition-transform after:duration-300 after:content-[''] hover:text-glaze-deep hover:after:scale-x-100 motion-reduce:after:transition-none"
+            : 'mix-blend-multiply hover:opacity-80'
         }`}
       >
         {label}

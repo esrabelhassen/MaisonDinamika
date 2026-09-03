@@ -50,7 +50,7 @@ export default function PanierClient({
         <p className="text-lg text-muted">{nav.panierVide}</p>
         <Link
           href={paths.produits(locale)}
-          className="mt-6 inline-block rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
+          className="mt-6 inline-block rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] motion-reduce:transition-none"
         >
           {nav.voirLesProduits}
         </Link>
@@ -138,7 +138,7 @@ export default function PanierClient({
             id="governorate"
             value={governorate}
             onChange={(e) => setGovernorate(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze motion-reduce:transition-none"
+            className="mt-1.5 w-full rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-all duration-300 focus:border-glaze focus:shadow-[0_0_0_3px_rgba(94,115,134,0.15)] motion-reduce:transition-none"
           >
             <option value="">—</option>
             {deliveryFees.map((fee) => (
@@ -172,7 +172,7 @@ export default function PanierClient({
 
         <Link
           href={checkoutHref}
-          className="mt-2 rounded-full border border-glaze bg-transparent px-7 py-3 text-center text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
+          className="mt-2 rounded-full border border-glaze bg-transparent px-7 py-3 text-center text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] motion-reduce:transition-none"
         >
           {nav.passerLaCommande}
         </Link>

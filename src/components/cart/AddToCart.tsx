@@ -75,7 +75,7 @@ export default function AddToCart({
           type="button"
           onClick={handleAdd}
           disabled={outOfStock}
-          className="rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:border-line disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted motion-reduce:transition-none"
+          className="rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_10px_28px_-12px_rgba(94,115,134,0.5)] disabled:cursor-not-allowed disabled:border-line disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted motion-reduce:transition-none"
         >
           {outOfStock ? labels.outOfStock : labels.add}
         </button>

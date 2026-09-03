@@ -45,7 +45,7 @@ export default function Testimonials() {
         {REVIEWS.map((review) => (
           <figure
             key={review.name}
-            className="flex flex-col rounded-2xl border border-line bg-paper/80 p-8 shadow-sm backdrop-blur-sm"
+            className="flex flex-col rounded-2xl border border-line bg-paper/80 p-8 shadow-sm backdrop-blur-sm transition-all duration-500 hover:-translate-y-1 hover:border-glaze/40 hover:shadow-[0_24px_50px_-24px_rgba(94,115,134,0.5)] motion-reduce:transition-none motion-reduce:hover:translate-y-0"
           >
             <Stars />
             <blockquote className="mt-5 flex-1 text-[15px] leading-relaxed text-ink">
