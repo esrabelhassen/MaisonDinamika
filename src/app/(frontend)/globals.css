@@ -41,3 +41,40 @@
     top: 2rem;
   }
 }
+
+/* DreamyBackground ambient blooms (src/components/ambient/DreamyBackground.tsx).
+   Three independent long, slow drift cycles (46s/58s/37s — deliberately unsynced)
+   so the blooms never fall into a repeating pattern together. Transform + opacity
+   only, no filter/layout animation, so this stays cheap to composite even though
+   each bloom covers a large area of the viewport. motion-reduce disables the
+   Tailwind `animate-[...]` utility entirely (see the component), which freezes
+   every bloom at this 0%/100% resting frame — a still gradient, not a blur/pause. */
+@keyframes dreamy-drift-a {
+  0%,
+  100% {
+    transform: translate(-6%, -4%) scale(1);
+  }
+  50% {
+    transform: translate(4%, 6%) scale(1.08);
+  }
+}
+@keyframes dreamy-drift-b {
+  0%,
+  100% {
+    transform: translate(5%, 3%) scale(1.05);
+  }
+  50% {
+    transform: translate(-4%, -6%) scale(0.96);
+  }
+}
+@keyframes dreamy-drift-c {
+  0%,
+  100% {
+    transform: translate(-3%, 5%) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: translate(4%, -3%) scale(1.12);
+    opacity: 1;
+  }
+}

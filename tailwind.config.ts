@@ -26,6 +26,10 @@ const config: Config = {
         'glaze-mid': '#77899E',
         'glaze-dark': '#363F49',
         'rim-brown': '#3E2A20',
+        // Single-purpose: the pale-gold bloom in the site-wide DreamyBackground
+        // ambient layer (src/components/ambient/DreamyBackground.tsx) only —
+        // not a general brand color, kept separate from the neutrals above.
+        'dream-gold': '#E9D8A8',
       },
       fontFamily: {
         display: ['var(--font-display)', 'serif'],

@@ -4,6 +4,7 @@ import { Fraunces, Inter } from 'next/font/google'
 import { defaultLocale, dirFor, isValidLocale } from '@/lib/i18n'
 import { CartProvider } from '@/lib/cart/CartContext'
 import { AuthProvider } from '@/lib/auth/AuthContext'
+import DreamyBackground from '@/components/ambient/DreamyBackground'
 import './globals.css'
 
 // Self-hosted at build time (next/font downloads + serves the font files itself) —
@@ -38,6 +39,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} dir={dir} className={`${fraunces.variable} ${inter.variable}`}>
       <body>
+        {/* Mounted once, first in <body> — see the component for why `fixed` +
+            a negative z-index here is enough to sit behind the transparent hero
+            canvas without touching any hero rig file. */}
+        <DreamyBackground />
         <AuthProvider>
           <CartProvider>{children}</CartProvider>
         </AuthProvider>
