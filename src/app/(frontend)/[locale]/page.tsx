@@ -7,6 +7,7 @@ import { getNavDict } from '@/lib/i18n'
 import Hero from '@/components/hero/Hero'
 import Nouveaute from '@/components/home/Nouveaute'
 import type { NouveauteItem } from '@/components/home/Nouveaute'
+import Testimonials from '@/components/home/Testimonials'
 import type { Product, Set } from '@/payload-types'
 import { toCatalogItem } from '@/lib/queries'
 
@@ -100,6 +101,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           outOfStock: nav.ruptureDeStock,
         }}
       />
+      <Testimonials />
     </>
   )
 }
