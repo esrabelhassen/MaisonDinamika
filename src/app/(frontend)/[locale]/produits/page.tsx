@@ -37,7 +37,12 @@ export default async function ProduitsIndexPage({ params }: { params: Promise<{ 
                     key={`${item.kind}-${item.id}`}
                     locale={locale}
                     item={item}
-                    ensembleLabel={nav.ensemble}
+                    labels={{
+                      ensemble: nav.ensemble,
+                      add: nav.ajouterAuPanier,
+                      added: nav.ajouteAuPanier,
+                      outOfStock: nav.ruptureDeStock,
+                    }}
                   />
                 ))}
               </div>

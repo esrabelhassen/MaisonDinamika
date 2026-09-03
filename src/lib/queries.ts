@@ -22,6 +22,7 @@ export function toCatalogItem(kind: 'product' | 'set', doc: Product | Set): Cata
     name: doc.name,
     slug: doc.slug ?? '',
     priceTND: doc.priceTND,
+    stock: doc.stock,
     imageUrl: image?.url ?? null,
     imageAlt: image?.alt ?? doc.name,
   }

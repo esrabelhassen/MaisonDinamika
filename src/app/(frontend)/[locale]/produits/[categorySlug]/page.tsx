@@ -31,7 +31,17 @@ export default async function CategoryPage({ params }: { params: Promise<Params>
       ) : (
         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {category.items.map((item) => (
-            <CatalogCard key={`${item.kind}-${item.id}`} locale={locale} item={item} ensembleLabel={nav.ensemble} />
+            <CatalogCard
+              key={`${item.kind}-${item.id}`}
+              locale={locale}
+              item={item}
+              labels={{
+                ensemble: nav.ensemble,
+                add: nav.ajouterAuPanier,
+                added: nav.ajouteAuPanier,
+                outOfStock: nav.ruptureDeStock,
+              }}
+            />
           ))}
         </div>
       )}

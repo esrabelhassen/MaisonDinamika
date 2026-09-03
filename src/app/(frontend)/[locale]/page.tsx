@@ -93,7 +93,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         locale={locale}
         heading={homepage.nouveaute?.heading}
         items={nouveauteItems}
-        ensembleLabel={nav.ensemble}
+        labels={{
+          ensemble: nav.ensemble,
+          add: nav.ajouterAuPanier,
+          added: nav.ajouteAuPanier,
+          outOfStock: nav.ruptureDeStock,
+        }}
       />
     </>
   )
