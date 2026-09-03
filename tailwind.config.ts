@@ -8,9 +8,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        paper: '#F4F2EC',
-        ink: '#20242A',
-        muted: '#767B82',
+        // Warm cream register (the 2026 reskin) — surfaces and ink went warm;
+        // the slate-blue accent (glaze/glaze-deep) is UNCHANGED on purpose, it's
+        // the brand accent and what the hero's own ceramic glaze photography
+        // already reads as. glaze-light/mid/dark are also unchanged: they're
+        // still used as genuine accent tints (the "Ensemble" tag, hover states)
+        // and — separately — heroScene.ts has its own hardcoded hex constants
+        // entirely independent of this file, so none of this reaches the canvas.
+        paper: '#F3EDE2', // was #F4F2EC — deeper, warmer ivory so it reads intentional
+        surface: '#EAE1D2', // NEW — second warm surface for alternating sections/cards
+        line: '#DDD2BE', // NEW — warm hairline/border, replaces cool border-glaze-light on structure
+        ink: '#2A2620', // was #20242A — warm espresso, not cool near-black
+        muted: '#655B4C', // was #767B82 — warm taupe-grey (AA-checked against paper AND surface)
         glaze: '#5E7386',
         'glaze-deep': '#3B4652',
         'glaze-light': '#C8CCD5',

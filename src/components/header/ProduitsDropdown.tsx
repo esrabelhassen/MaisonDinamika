@@ -68,7 +68,7 @@ export default function ProduitsDropdown({
           ref={panelRef}
           role="region"
           aria-label={label}
-          className="fixed inset-x-0 top-20 z-40 border-b border-glaze-light bg-paper shadow-lg"
+          className="fixed inset-x-0 top-20 z-40 border-b border-line bg-paper shadow-lg"
         >
           <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-8 sm:grid-cols-3 lg:grid-cols-4">
             {categories.map((category) => (

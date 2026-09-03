@@ -126,7 +126,7 @@ export default function ProfilClient({
 
   return (
     <div className="flex flex-col gap-12">
-      <section className="rounded-2xl border border-glaze-light p-6">
+      <section className="rounded-2xl border border-line bg-surface/40 p-8">
         <h2 className="font-display text-xl text-ink">{nav.informationsPersonnelles}</h2>
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field
@@ -158,7 +158,7 @@ export default function ProfilClient({
               value={email}
               disabled
               readOnly
-              className="rounded-lg border border-glaze-light bg-glaze-light/30 px-4 py-2.5 text-muted"
+              className="rounded-lg border border-line bg-surface/60 px-4 py-2.5 text-muted"
             />
             <p className="text-xs text-muted">{nav.emailNonModifiable}</p>
           </div>
@@ -174,13 +174,13 @@ export default function ProfilClient({
           type="button"
           onClick={handleProfileSave}
           disabled={profileSubmitting}
-          className="mt-4 rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+          className="mt-4 rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
         >
           {profileSubmitting ? nav.enregistrementEnCours : nav.enregistrer}
         </button>
       </section>
 
-      <section className="rounded-2xl border border-glaze-light p-6">
+      <section className="rounded-2xl border border-line bg-surface/40 p-8">
         <h2 className="font-display text-xl text-ink">{nav.changerMotDePasse}</h2>
 
         {passwordErrors.form && (
@@ -233,7 +233,7 @@ export default function ProfilClient({
           type="button"
           onClick={handlePasswordSave}
           disabled={passwordSubmitting}
-          className="mt-4 rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+          className="mt-4 rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
         >
           {passwordSubmitting ? nav.enregistrementEnCours : nav.changerMotDePasse}
         </button>

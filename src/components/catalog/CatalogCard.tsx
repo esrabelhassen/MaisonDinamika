@@ -65,7 +65,7 @@ export default function CatalogCard({
   return (
     <div className="group min-w-0">
       <Link href={href} className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glaze focus-visible:ring-offset-2">
-        <div className="relative aspect-[4/5] overflow-hidden bg-glaze-light">
+        <div className="relative aspect-[4/5] overflow-hidden bg-surface">
           {item.imageUrl && (
             <Image
               src={item.imageUrl}
@@ -94,7 +94,7 @@ export default function CatalogCard({
         type="button"
         onClick={handleAdd}
         disabled={outOfStock}
-        className="mt-3 w-full border border-ink/50 py-2.5 text-[11px] uppercase tracking-[0.14em] text-ink transition-colors hover:bg-ink hover:text-paper disabled:cursor-not-allowed disabled:border-glaze-light disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted motion-reduce:transition-none"
+        className="mt-3 w-full border border-glaze py-2.5 text-[11px] uppercase tracking-[0.14em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:border-line disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted motion-reduce:transition-none"
       >
         {outOfStock ? labels.outOfStock : justAdded ? labels.added : labels.add}
       </button>

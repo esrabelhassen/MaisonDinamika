@@ -50,7 +50,7 @@ export default function PanierClient({
         <p className="text-lg text-muted">{nav.panierVide}</p>
         <Link
           href={paths.produits(locale)}
-          className="mt-6 inline-block rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+          className="mt-6 inline-block rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
         >
           {nav.voirLesProduits}
         </Link>
@@ -59,7 +59,7 @@ export default function PanierClient({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-16">
+    <div className="mx-auto max-w-4xl px-6 py-20 sm:py-24">
       <h1 className="font-display text-3xl text-ink">{nav.panier}</h1>
 
       <ul className="mt-10 flex flex-col gap-6">
@@ -70,10 +70,10 @@ export default function PanierClient({
           const wasCapped = line.qty >= line.maxStock && line.maxStock > 0
 
           return (
-            <li key={line.lineId} className="flex gap-4 border-b border-glaze-light pb-6 sm:gap-6">
+            <li key={line.lineId} className="flex gap-4 border-b border-line pb-6 sm:gap-6">
               <Link
                 href={href}
-                className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-glaze-light sm:h-28 sm:w-28"
+                className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-surface sm:h-28 sm:w-28"
               >
                 {line.image && (
                   <Image src={line.image} alt={line.name} fill sizes="112px" className="object-cover" />
@@ -97,7 +97,7 @@ export default function PanierClient({
                 <div className="text-sm text-glaze">{formatPriceTND(line.priceTND)}</div>
 
                 <div className="mt-1 flex items-center gap-4">
-                  <div className="flex items-center gap-3 rounded-full border border-glaze-light px-2 py-1">
+                  <div className="flex items-center gap-3 rounded-full border border-line px-2 py-1">
                     <button
                       type="button"
                       aria-label={nav.diminuerQuantite}
@@ -129,7 +129,7 @@ export default function PanierClient({
         })}
       </ul>
 
-      <div className="mt-10 ms-auto flex max-w-sm flex-col gap-4 rounded-2xl border border-glaze-light p-6">
+      <div className="mt-10 ms-auto flex max-w-sm flex-col gap-4 rounded-2xl border border-line bg-surface/40 p-7">
         <div>
           <label htmlFor="governorate" className="text-sm text-muted">
             {nav.choisirGouvernorat}
@@ -138,7 +138,7 @@ export default function PanierClient({
             id="governorate"
             value={governorate}
             onChange={(e) => setGovernorate(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-glaze-light bg-white/60 px-4 py-2.5 text-ink"
+            className="mt-1.5 w-full rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze motion-reduce:transition-none"
           >
             <option value="">—</option>
             {deliveryFees.map((fee) => (
@@ -164,7 +164,7 @@ export default function PanierClient({
                   : formatPriceTND(deliveryMillimes / 1000)}
             </dd>
           </div>
-          <div className="flex justify-between border-t border-glaze-light pt-2 font-medium">
+          <div className="flex justify-between border-t border-line pt-2 font-medium">
             <dt className="text-ink">{nav.total}</dt>
             <dd className="text-ink">{formatPriceTND(totalMillimes / 1000)}</dd>
           </div>
@@ -172,7 +172,7 @@ export default function PanierClient({
 
         <Link
           href={checkoutHref}
-          className="mt-2 rounded-full bg-ink px-7 py-3 text-center text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+          className="mt-2 rounded-full border border-glaze bg-transparent px-7 py-3 text-center text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
         >
           {nav.passerLaCommande}
         </Link>

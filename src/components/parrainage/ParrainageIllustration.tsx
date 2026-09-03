@@ -5,7 +5,7 @@
 // visual uses (bg-[radial-gradient(...)]) — no photography needed for this page.
 export default function ParrainageIllustration() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2.5rem] bg-[radial-gradient(circle_at_38%_35%,#F4F2EC,#C8CCD5_55%,#77899E_100%)]">
+    <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2.5rem] bg-[radial-gradient(circle_at_38%_35%,#F3EDE2,#C8CCD5_55%,#77899E_100%)]">
       <svg
         aria-hidden
         viewBox="0 0 320 320"

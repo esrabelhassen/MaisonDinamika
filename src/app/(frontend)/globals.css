@@ -14,11 +14,15 @@
     @apply font-body antialiased;
   }
 
+  /* The 2026 reskin's "luxury" lean: bigger, lighter-weight display type with
+     calm (slightly tightened) tracking, rather than many small bold headings.
+     Per-instance size/color classes are untouched — this only sets the weight
+     and letter-spacing baseline every h1–h4 inherits unless it says otherwise. */
   h1,
   h2,
   h3,
   h4 {
-    @apply font-display;
+    @apply font-display font-light tracking-tight;
   }
 
   /* Visible focus ring on every interactive element, everywhere in the storefront. */

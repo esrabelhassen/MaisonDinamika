@@ -42,7 +42,7 @@ export default async function SetPage({ params }: { params: Promise<Params> }) {
   const nav = getNavDict(locale)
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
         <Gallery images={set.images} altFallback={set.name} />
 
@@ -66,7 +66,7 @@ export default async function SetPage({ params }: { params: Promise<Params> }) {
           )}
 
           {set.components.length > 0 && (
-            <div className="mt-8 rounded-2xl border border-glaze-light p-6">
+            <div className="mt-8 rounded-2xl border border-line bg-surface/40 p-7">
               <h2 className="font-display text-lg text-ink">{nav.contenuDeLEnsemble}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {set.components.map((component) => (

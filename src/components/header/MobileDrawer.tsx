@@ -126,7 +126,7 @@ export default function MobileDrawer({
                   </span>
                 </button>
                 {produitsExpanded && (
-                  <div id="mobile-produits-panel" className="ms-3 flex flex-col gap-4 border-s border-glaze-light ps-3 pb-2">
+                  <div id="mobile-produits-panel" className="ms-3 flex flex-col gap-4 border-s border-line ps-3 pb-2">
                     {categories.map((category) => (
                       <div key={category.id}>
                         <Link
@@ -183,13 +183,13 @@ export default function MobileDrawer({
                 {nav.panier}
               </Link>
 
-              <div className="mt-2 flex flex-col gap-1 border-t border-glaze-light pt-2">
+              <div className="mt-2 flex flex-col gap-1 border-t border-line pt-2">
                 <AuthNavItem locale={locale} labels={nav} linkClassName="rounded-sm py-3 text-left" onNavigate={close} />
               </div>
             </nav>
 
             {contactLinks.length > 0 && (
-              <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 border-t border-glaze-light pt-4 text-sm text-muted">
+              <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-4 text-sm text-muted">
                 {contactLinks.map((link) => (
                   <a key={link.href} href={link.href} className="hover:text-ink">
                     {link.label}

@@ -47,7 +47,7 @@ export default function AddToCart({
   return (
     <div>
       <div className="flex flex-wrap items-center gap-4">
-        <div className="flex items-center gap-3 rounded-full border border-glaze-light px-2 py-1">
+        <div className="flex items-center gap-3 rounded-full border border-line px-2 py-1">
           <button
             type="button"
             aria-label={labels.decrease}
@@ -75,7 +75,7 @@ export default function AddToCart({
           type="button"
           onClick={handleAdd}
           disabled={outOfStock}
-          className="rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep disabled:cursor-not-allowed disabled:bg-muted motion-reduce:transition-none"
+          className="rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:border-line disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted motion-reduce:transition-none"
         >
           {outOfStock ? labels.outOfStock : labels.add}
         </button>

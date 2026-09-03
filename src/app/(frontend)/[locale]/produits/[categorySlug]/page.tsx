@@ -23,7 +23,7 @@ export default async function CategoryPage({ params }: { params: Promise<Params>
   const nav = getNavDict(locale)
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
       <h1 className="font-display text-4xl text-ink">{category.name}</h1>
 
       {category.items.length === 0 ? (

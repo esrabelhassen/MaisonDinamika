@@ -37,7 +37,7 @@ export default function OrderSummary({ locale, order }: { locale: Locale; order:
         <h2 className="font-display text-xl text-ink">{nav.recapitulatif}</h2>
         <ul className="mt-4 flex flex-col gap-3">
           {(order.items ?? []).map((line, i) => (
-            <li key={line.id ?? i} className="flex justify-between gap-3 border-b border-glaze-light pb-3 text-sm">
+            <li key={line.id ?? i} className="flex justify-between gap-3 border-b border-line pb-3 text-sm">
               <div>
                 <div className="text-ink">{line.nameSnapshot}</div>
                 <div className="text-muted">
@@ -62,7 +62,7 @@ export default function OrderSummary({ locale, order }: { locale: Locale; order:
               {order.deliveryFeeTND === 0 ? nav.livraisonOfferte : formatPriceTND(order.deliveryFeeTND ?? 0)}
             </dd>
           </div>
-          <div className="flex justify-between border-t border-glaze-light pt-2 font-medium">
+          <div className="flex justify-between border-t border-line pt-2 font-medium">
             <dt className="text-ink">{nav.total}</dt>
             <dd className="text-ink">{formatPriceTND(order.totalTND ?? 0)}</dd>
           </div>

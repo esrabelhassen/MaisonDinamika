@@ -114,7 +114,7 @@ export default function AddressesClient({
       {addresses.length > 0 && (
         <ul className="flex flex-col gap-4">
           {addresses.map((address, index) => (
-            <li key={index} className="rounded-2xl border border-glaze-light p-5">
+            <li key={index} className="rounded-2xl border border-line bg-surface/40 p-6">
               {index === 0 && (
                 <span className="mb-2 inline-block rounded-sm bg-glaze-light px-1.5 py-0.5 text-xs text-glaze-dark">
                   {nav.adresseParDefaut}
@@ -161,12 +161,12 @@ export default function AddressesClient({
         <button
           type="button"
           onClick={openAdd}
-          className="self-start rounded-full border border-glaze-light px-6 py-2.5 text-sm text-ink transition-colors hover:border-glaze motion-reduce:transition-none"
+          className="self-start rounded-full border border-glaze bg-transparent px-6 py-2.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
         >
           {nav.ajouterUneAdresse}
         </button>
       ) : (
-        <div className="rounded-2xl border border-glaze-light p-5">
+        <div className="rounded-2xl border border-line bg-surface/40 p-6">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <Field
               id="addr-label"
@@ -207,7 +207,7 @@ export default function AddressesClient({
                 disabled={submitting}
                 onChange={(e) => setForm((f) => ({ ...f, governorate: e.target.value }))}
                 aria-invalid={!!errors.governorate}
-                className="rounded-lg border border-glaze-light bg-white/60 px-4 py-2.5 text-ink disabled:opacity-60"
+                className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
               >
                 <option value="">—</option>
                 {governorates.map((g) => (
@@ -234,7 +234,7 @@ export default function AddressesClient({
               type="button"
               onClick={handleSave}
               disabled={submitting}
-              className="rounded-full bg-ink px-6 py-2.5 text-sm text-paper transition-colors hover:bg-glaze-deep disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+              className="rounded-full border border-glaze bg-transparent px-6 py-2.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
             >
               {submitting ? nav.enregistrementEnCours : nav.enregistrer}
             </button>

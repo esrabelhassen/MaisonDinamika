@@ -61,16 +61,16 @@ export default async function Footer({ locale }: { locale: Locale }) {
   const year = new Date().getFullYear()
 
   return (
-    <footer id="contact" className="border-t border-glaze-light bg-ink text-paper">
+    <footer id="contact" className="border-t border-line bg-ink text-paper">
       <div className="mx-auto max-w-6xl px-6 py-16 sm:py-20">
         <div className="grid grid-cols-1 gap-12 border-b border-paper/10 pb-14 sm:grid-cols-3 sm:gap-8">
           {promoCards.map((card) => (
             <div key={card.type}>
-              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-glaze-light/30 text-glaze-light">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full border border-paper/30 text-paper/70">
                 <PromoIcon type={card.type} />
               </div>
               <h3 className="mt-5 font-display text-xl text-paper">{card.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-glaze-light">{card.text}</p>
+              <p className="mt-2 text-sm leading-relaxed text-paper/70">{card.text}</p>
               <Link
                 href={card.href}
                 className="mt-4 inline-flex items-center gap-1.5 rounded-sm text-sm text-paper underline-offset-4 transition-colors hover:text-glaze-light hover:underline motion-reduce:transition-none"
@@ -115,7 +115,7 @@ export default async function Footer({ locale }: { locale: Locale }) {
                       aria-label={link.label}
                       title={link.label}
                       {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-glaze-light/40 text-glaze-light transition-colors hover:border-paper hover:text-paper motion-reduce:transition-none"
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 text-paper/70 transition-colors hover:border-paper hover:text-paper motion-reduce:transition-none"
                     >
                       <ContactIcon type={link.type} />
                     </a>
@@ -126,7 +126,7 @@ export default async function Footer({ locale }: { locale: Locale }) {
           )}
         </div>
 
-        <div className="mt-10 border-t border-paper/10 pt-6 text-xs text-glaze-light/70">
+        <div className="mt-10 border-t border-paper/10 pt-6 text-xs text-paper/60">
           © {year} {brandName}. {nav.droitsReserves}
         </div>
       </div>

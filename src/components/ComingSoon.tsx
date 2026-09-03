@@ -19,12 +19,12 @@ export default function ComingSoon({
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center px-6 py-20 text-center sm:py-28">
       <p className="text-sm uppercase tracking-[0.28em] text-glaze">{nav.bientotDisponible}</p>
-      <h1 className="mt-4 font-display text-4xl text-ink sm:text-5xl">{title}</h1>
-      <div aria-hidden className="mx-auto mt-6 h-px w-16 bg-glaze-light" />
+      <h1 className="mt-5 font-display text-4xl font-light text-ink sm:text-5xl">{title}</h1>
+      <div aria-hidden className="mx-auto mt-6 h-px w-16 bg-line" />
       <p className="mt-8 max-w-[50ch] text-lg leading-relaxed text-muted">{text}</p>
       <Link
         href={paths.home(locale)}
-        className="mt-10 inline-block rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+        className="mt-10 inline-block rounded-full border border-glaze bg-transparent px-7 py-3.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
       >
         {nav.retourAlAccueil}
       </Link>

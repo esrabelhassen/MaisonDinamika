@@ -46,7 +46,7 @@ export default async function ComptePage({ params }: { params: Promise<{ locale:
           <p className="text-muted">{nav.aucuneCommande}</p>
           <Link
             href={paths.produits(locale)}
-            className="mt-4 inline-block rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+            className="mt-4 inline-block rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
           >
             {nav.voirLesProduits}
           </Link>
@@ -59,7 +59,7 @@ export default async function ComptePage({ params }: { params: Promise<{ locale:
               <li key={order.id}>
                 <Link
                   href={paths.compteCommande(locale, order.orderNumber ?? String(order.id))}
-                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-glaze-light p-5 transition-colors hover:border-glaze motion-reduce:transition-none"
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-line bg-surface/40 p-6 transition-colors hover:border-glaze motion-reduce:transition-none"
                 >
                   <div>
                     <div className="font-display text-lg text-ink">{order.orderNumber}</div>

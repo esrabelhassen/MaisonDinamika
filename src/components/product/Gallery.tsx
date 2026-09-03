@@ -11,7 +11,7 @@ export default function Gallery({ images, altFallback }: { images: ImageRef[]; a
   if (images.length === 0) {
     // Tasteful placeholder — same soft glaze tone the catalog cards use when a
     // product has no image at all.
-    return <div aria-hidden className="aspect-square w-full rounded-2xl bg-glaze-light" />
+    return <div aria-hidden className="aspect-square w-full rounded-2xl bg-surface" />
   }
 
   const active = images[index]
@@ -34,7 +34,7 @@ export default function Gallery({ images, altFallback }: { images: ImageRef[]; a
         aria-roledescription="carousel"
         tabIndex={0}
         onKeyDown={handleKeyDown}
-        className="relative aspect-square w-full overflow-hidden rounded-2xl bg-glaze-light"
+        className="relative aspect-square w-full overflow-hidden rounded-2xl bg-surface"
       >
         <Image
           src={active.url}

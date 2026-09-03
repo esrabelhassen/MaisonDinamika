@@ -50,7 +50,7 @@ export default async function ParrainagePage({ params }: { params: Promise<{ loc
 
           <a
             href={shareHref}
-            className="mt-10 inline-block rounded-full bg-ink px-7 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+            className="mt-10 inline-block rounded-full border border-glaze bg-transparent px-7 py-3.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
           >
             {nav.parrainageCta}
           </a>

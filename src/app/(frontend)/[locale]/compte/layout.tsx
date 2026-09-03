@@ -32,7 +32,7 @@ export default async function CompteLayout({
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
+    <div className="mx-auto max-w-5xl px-6 py-20 sm:py-24">
       <div className="grid grid-cols-1 gap-10 lg:grid-cols-[220px_1fr]">
         <AccountNav locale={locale} />
         <div className="min-w-0">{children}</div>

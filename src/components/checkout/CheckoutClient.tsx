@@ -223,7 +223,7 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
   if (items.length === 0) return null
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-16">
+    <div className="mx-auto max-w-5xl px-6 py-20 sm:py-24">
       <h1 className="font-display text-3xl text-ink">{nav.commandeTitre}</h1>
 
       {driftMessages.length > 0 && (
@@ -238,7 +238,7 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
             <button
               type="button"
               onClick={() => setReviewed(true)}
-              className="mt-3 rounded-full bg-ink px-5 py-2 text-xs text-paper hover:bg-glaze-deep"
+              className="mt-3 rounded-full border border-glaze bg-transparent px-5 py-2 text-xs uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper"
             >
               {nav.jaiVuContinuer}
             </button>
@@ -265,7 +265,7 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
                   disabled={submitting}
                   onChange={(e) => handleGovernorateChange(e.target.value)}
                   aria-invalid={!!fieldErrors.governorate}
-                  className="rounded-lg border border-glaze-light bg-white/60 px-4 py-2.5 text-ink disabled:opacity-60"
+                  className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
                 >
                   <option value="">—</option>
                   {governorates.map((g) => (
@@ -289,12 +289,12 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
                 disabled={submitting}
                 onChange={(e) => setNotes(e.target.value)}
                 rows={3}
-                className="rounded-lg border border-glaze-light bg-white/60 px-4 py-2.5 text-ink disabled:opacity-60"
+                className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
               />
             </div>
           </section>
 
-          <section className="rounded-2xl border border-glaze-light bg-glaze-light/30 p-5 text-sm text-ink">
+          <section className="rounded-2xl border border-line bg-surface/60 p-5 text-sm text-ink">
             {nav.paiementLivraisonNotice}
           </section>
 
@@ -308,13 +308,13 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
             type="button"
             onClick={handleSubmit}
             disabled={!canSubmit}
-            className="self-start rounded-full bg-ink px-8 py-3.5 text-sm text-paper transition-colors hover:bg-glaze-deep disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
+            className="self-start rounded-full border border-glaze bg-transparent px-8 py-3.5 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
           >
             {submitting ? nav.commandeEnCours : nav.confirmerLaCommande}
           </button>
         </div>
 
-        <aside className="flex h-fit flex-col gap-4 rounded-2xl border border-glaze-light p-6">
+        <aside className="flex h-fit flex-col gap-4 rounded-2xl border border-line bg-surface/60 p-7">
           <h2 className="font-display text-xl text-ink">{nav.recapitulatif}</h2>
 
           {!preview ? (
@@ -326,7 +326,7 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
                   const href = line.itemType === 'set' ? paths.ensemble(locale, line.slug) : paths.produit(locale, line.slug)
                   return (
                     <li key={`${line.itemType}-${line.id}`} className="flex items-center gap-3">
-                      <Link href={href} className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-glaze-light">
+                      <Link href={href} className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-surface">
                         {line.image && <Image src={line.image} alt={line.name} fill sizes="48px" className="object-cover" />}
                       </Link>
                       <div className="min-w-0 flex-1">
@@ -345,7 +345,7 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
                 })}
               </ul>
 
-              <dl className="flex flex-col gap-2 border-t border-glaze-light pt-4 text-sm">
+              <dl className="flex flex-col gap-2 border-t border-line pt-4 text-sm">
                 <div className="flex justify-between">
                   <dt className="text-muted">{nav.sousTotal}</dt>
                   <dd className="text-ink">{formatPriceTND(preview.subtotalMillimes / 1000)}</dd>
@@ -360,7 +360,7 @@ export default function CheckoutClient({ locale, prefill }: { locale: Locale; pr
                         : formatPriceTND(preview.deliveryMillimes / 1000)}
                   </dd>
                 </div>
-                <div className="flex justify-between border-t border-glaze-light pt-2 font-medium">
+                <div className="flex justify-between border-t border-line pt-2 font-medium">
                   <dt className="text-ink">{nav.total}</dt>
                   <dd className="text-ink">{formatPriceTND(preview.totalMillimes / 1000)}</dd>
                 </div>

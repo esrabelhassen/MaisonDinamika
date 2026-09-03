@@ -81,7 +81,7 @@ export default function HeaderClient({
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 ${BAR_HEIGHT_CLASS} transition-colors duration-300 motion-reduce:transition-none motion-reduce:duration-0 ${
-        solid ? 'border-b border-glaze-light bg-paper' : 'border-b border-transparent bg-transparent'
+        solid ? 'border-b border-line bg-paper' : 'border-b border-transparent bg-transparent'
       }`}
     >
       {/* Pinned to the header's own corner (the header is already `fixed`, which

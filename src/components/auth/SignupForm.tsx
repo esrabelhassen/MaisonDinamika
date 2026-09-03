@@ -88,7 +88,7 @@ export default function SignupForm({ locale, redirectTarget }: { locale: Locale;
   ]
 
   return (
-    <div className="mx-auto max-w-md px-6 py-16">
+    <div className="mx-auto max-w-md px-6 py-20 sm:py-24">
       <h1 className="font-display text-3xl text-ink">{nav.inscriptionTitre}</h1>
 
       <div className="mt-8 flex flex-col gap-5">
@@ -113,7 +113,7 @@ export default function SignupForm({ locale, redirectTarget }: { locale: Locale;
               onKeyDown={handleKeyDown}
               aria-invalid={!!field.error}
               aria-describedby={field.error ? `${field.id}-error` : undefined}
-              className="rounded-lg border border-glaze-light bg-white/60 px-4 py-2.5 text-ink disabled:opacity-60"
+              className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
             />
             {field.error && (
               <p id={`${field.id}-error`} className="text-sm text-rim-brown">
@@ -127,7 +127,7 @@ export default function SignupForm({ locale, redirectTarget }: { locale: Locale;
           type="button"
           onClick={handleSubmit}
           disabled={submitting}
-          className="mt-2 rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
+          className="mt-2 rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none"
         >
           {submitting ? nav.creationEnCours : nav.creerUnCompte}
         </button>

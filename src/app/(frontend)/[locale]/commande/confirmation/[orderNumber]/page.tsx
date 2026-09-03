@@ -53,7 +53,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<Par
   const statusKey = order.status ? STATUS_LABEL_KEYS[order.status] : null
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16">
+    <div className="mx-auto max-w-2xl px-6 py-20 sm:py-24">
       <p className="text-sm text-glaze">{nav.numeroDeCommande}</p>
       <h1 className="font-display text-3xl text-ink">{order.orderNumber}</h1>
 
@@ -63,7 +63,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<Par
         </p>
       )}
 
-      <div className="mt-8 rounded-2xl border border-glaze-light bg-glaze-light/30 p-5 text-sm text-ink">
+      <div className="mt-8 rounded-2xl border border-line bg-surface/60 p-5 text-sm text-ink">
         {nav.paiementLivraisonConfirmation}
       </div>
 
@@ -75,7 +75,7 @@ export default async function ConfirmationPage({ params }: { params: Promise<Par
 
       <Link
         href={paths.produits(locale)}
-        className="mt-8 inline-block rounded-full bg-ink px-7 py-3 text-sm text-paper transition-colors hover:bg-glaze-deep motion-reduce:transition-none"
+        className="mt-8 inline-block rounded-full border border-glaze bg-transparent px-7 py-3 text-sm uppercase tracking-[0.08em] text-ink transition-colors hover:bg-glaze hover:text-paper motion-reduce:transition-none"
       >
         {nav.voirLesProduits}
       </Link>

@@ -53,7 +53,7 @@ export default async function AProposPage({ params }: { params: Promise<Params> 
 
           <div
             aria-hidden
-            className={`mt-6 h-px w-16 bg-glaze-light ${hasImages ? '' : 'mx-auto'}`}
+            className={`mt-6 h-px w-16 bg-line ${hasImages ? '' : 'mx-auto'}`}
           />
 
           <div
@@ -62,7 +62,7 @@ export default async function AProposPage({ params }: { params: Promise<Params> 
               [&_h3]:font-display [&_h3]:text-2xl [&_h3]:text-ink [&_h3]:tracking-wide
               [&_h3+p]:mt-4 [&_p]:mt-4
               [&_em]:not-italic [&_em]:italic [&_em]:text-glaze-deep
-              [&_p:last-of-type]:mt-10 [&_p:last-of-type]:border-t [&_p:last-of-type]:border-glaze-light
+              [&_p:last-of-type]:mt-10 [&_p:last-of-type]:border-t [&_p:last-of-type]:border-line
               [&_p:last-of-type]:pt-8 [&_p:last-of-type]:font-display [&_p:last-of-type]:text-xl
               [&_p:last-of-type]:italic [&_p:last-of-type]:text-glaze-deep
               ${hasImages ? '' : 'mx-auto'}
@@ -96,7 +96,7 @@ export default async function AProposPage({ params }: { params: Promise<Params> 
             {images.slice(0, 4).map((image, i) => (
               <div
                 key={i}
-                className={`relative overflow-hidden rounded-2xl bg-glaze-light ${
+                className={`relative overflow-hidden rounded-2xl bg-surface ${
                   i === 0 ? 'col-span-2 aspect-[4/3]' : 'aspect-square'
                 }`}
               >

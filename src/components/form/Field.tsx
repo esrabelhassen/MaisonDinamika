@@ -42,7 +42,7 @@ export default function Field({
         onKeyDown={onKeyDown}
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="rounded-lg border border-glaze-light bg-white/60 px-4 py-2.5 text-ink disabled:opacity-60"
+        className="rounded-lg border border-line bg-paper/60 px-4 py-2.5 text-ink transition-colors focus:border-glaze disabled:opacity-60 motion-reduce:transition-none"
       />
       {error && (
         <p id={`${id}-error`} className="text-sm text-rim-brown">

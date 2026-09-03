@@ -14,7 +14,7 @@ export default async function ProduitsIndexPage({ params }: { params: Promise<{ 
   const categories = (await getAllCatalog(locale)).filter((category) => category.items.length > 0)
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-16">
+    <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
       <h1 className="font-display text-4xl text-ink">{nav.produits}</h1>
 
       {categories.length === 0 ? (
