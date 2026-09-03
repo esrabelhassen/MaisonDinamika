@@ -148,11 +148,11 @@ function TitleOverlay({ title, overlayStyle }: { title: string; overlayStyle: 'l
   // edges, so the photo (not the scrim) stays the visual centerpiece. The scrim
   // colour is the OPPOSITE of the text colour: light (paper) text needs a dark
   // (ink) scrim behind it to read, and dark (ink) text needs a light (paper) one.
-  // rgba values are the current `ink`/`paper` token hex (#2A2620 / #F3EDE2).
+  // rgba values are the current `ink`/`paper` token hex (#2A2620 / #EEE8DC).
   const scrim =
     overlayStyle === 'light'
       ? 'radial-gradient(ellipse 65% 55% at center, rgba(42,38,32,0.5) 0%, rgba(42,38,32,0) 72%)'
-      : 'radial-gradient(ellipse 65% 55% at center, rgba(243,237,226,0.6) 0%, rgba(243,237,226,0) 72%)'
+      : 'radial-gradient(ellipse 65% 55% at center, rgba(238,232,220,0.6) 0%, rgba(238,232,220,0) 72%)'
 
   return (
     <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center px-6">

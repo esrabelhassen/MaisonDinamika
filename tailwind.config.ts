@@ -15,9 +15,18 @@ const config: Config = {
         // still used as genuine accent tints (the "Ensemble" tag, hover states)
         // and — separately — heroScene.ts has its own hardcoded hex constants
         // entirely independent of this file, so none of this reaches the canvas.
-        paper: '#F3EDE2', // was #F4F2EC — deeper, warmer ivory so it reads intentional
-        surface: '#EAE1D2', // NEW — second warm surface for alternating sections/cards
-        line: '#DDD2BE', // NEW — warm hairline/border, replaces cool border-glaze-light on structure
+        // Cream re-tuned (was #F3EDE2/#EAE1D2/#DDD2BE) to sit closer to the hero's
+        // OWN cream (#efe9dc, hardcoded inside heroScene.ts's env-map gradient —
+        // untouched, this doesn't reach the canvas) and its warm-grey mid-tone
+        // (#cfc9bd) that gradient passes through on its way to the glaze-blue
+        // dishes. Same hue family as before, just a touch deeper/greyer instead
+        // of leaning ivory-gold, so the cream reads as one continuous surface
+        // with the hero rather than a warmer register bumping up against a
+        // cooler one. AA re-checked: both `ink` and `muted` land at HIGHER
+        // contrast against these (darker) values than before, so no regression.
+        paper: '#EEE8DC',
+        surface: '#E5DCCC',
+        line: '#D8CDB8', // warm hairline/border, replaces cool border-glaze-light on structure
         ink: '#2A2620', // was #20242A — warm espresso, not cool near-black
         muted: '#655B4C', // was #767B82 — warm taupe-grey (AA-checked against paper AND surface)
         glaze: '#5E7386',

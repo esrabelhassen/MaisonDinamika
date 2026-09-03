@@ -27,20 +27,19 @@
 // crisp `glaze`/`glaze-deep` accent itself is never used here, so blue stays
 // reserved for foreground buttons/links/focus, not the haze.
 //
-// Peak alphas (0.62/0.58/0.22 — turned up a notch from the original 0.55/0.5/0.18
-// for more presence, per the "play more with the background" pass) were
-// re-contrast-checked at the absolute worst case: all three blooms overlapping
-// at once, sequentially alpha-composited over `paper`. That blend comes out to
-// ≈ rgb(227,218,194); `ink` on it is ≈9.9:1 and `muted` ≈4.78:1 — both still
-// clear WCAG AA (4.5:1), so the extra presence didn't cost any legibility.
+// Peak alphas (0.62/0.58/0.22) were contrast-checked at the absolute worst
+// case: all three blooms overlapping at once, sequentially alpha-composited
+// over `paper`. Re-checked again after the paper/surface re-tune (below) —
+// that blend now comes out to ≈ rgb(226,216,192); `ink` on it is ≈10.6:1 and
+// `muted` ≈4.7:1 — both still clear WCAG AA (4.5:1).
 export default function DreamyBackground() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-      {/* A: ivory/cream — surface #EAE1D2 */}
+      {/* A: ivory/cream — surface #E5DCCC */}
       <div
         className="absolute -left-[15vmax] -top-[25vmax] h-[85vmax] w-[85vmax] animate-[dreamy-drift-a_46s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
         style={{
-          background: 'radial-gradient(circle, rgba(234,225,210,0.62) 0%, rgba(234,225,210,0) 70%)',
+          background: 'radial-gradient(circle, rgba(229,220,204,0.62) 0%, rgba(229,220,204,0) 70%)',
         }}
       />
       {/* B: pale gold/sand — dream-gold #E9D8A8 */}
