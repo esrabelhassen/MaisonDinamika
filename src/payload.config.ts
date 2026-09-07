@@ -10,6 +10,7 @@ import { Users } from './collections/Users'
 import { Customers } from './collections/Customers'
 import { Media } from './collections/Media'
 import { Categories } from './collections/Categories'
+import { SousCategories } from './collections/SousCategories'
 import { Products } from './collections/Products'
 import { Sets } from './collections/Sets'
 import { Collections } from './collections/Collections'
@@ -24,7 +25,7 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   admin: { user: Users.slug },
-  collections: [Users, Customers, Media, Categories, Products, Sets, Collections, Orders],
+  collections: [Users, Customers, Media, Categories, SousCategories, Products, Sets, Collections, Orders],
   globals: [Homepage, Apropos, Contact, SiteSettings],
   db: postgresAdapter({ pool: { connectionString: process.env.DATABASE_URI || '' } }),
   editor: lexicalEditor(),

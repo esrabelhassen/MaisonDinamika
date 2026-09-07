@@ -120,13 +120,7 @@ export default function HeaderClient({
           <Link href={paths.aPropos(locale)} className={linkClass}>
             {nav.aPropos}
           </Link>
-          <ProduitsDropdown
-            locale={locale}
-            label={nav.produits}
-            ensembleLabel={nav.ensemble}
-            categories={categories}
-            solid={solid}
-          />
+          <ProduitsDropdown locale={locale} label={nav.produits} categories={categories} solid={solid} />
           <Link href={paths.collection(locale)} className={linkClass}>
             {nav.collection}
           </Link>

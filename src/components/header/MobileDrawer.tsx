@@ -129,33 +129,17 @@ export default function MobileDrawer({
                   <div id="mobile-produits-panel" className="ms-3 flex flex-col gap-4 border-s border-line ps-3 pb-2">
                     {categories.map((category) => (
                       <div key={category.id}>
-                        <Link
-                          href={paths.categorie(locale, category.slug)}
-                          onClick={close}
-                          className="block py-1 font-display text-base"
-                        >
-                          {category.name}
-                        </Link>
+                        {/* Category is a grouping label only — not a link. */}
+                        <div className="block py-1 font-display text-base">{category.name}</div>
                         <ul className="flex flex-col gap-1 ps-2">
-                          {category.products.map((product) => (
-                            <li key={`m-product-${product.id}`}>
+                          {category.sousCategories.map((sousCategorie) => (
+                            <li key={`m-sc-${sousCategorie.id}`}>
                               <Link
-                                href={paths.produit(locale, product.slug)}
+                                href={paths.sousCategorie(locale, sousCategorie.slug)}
                                 onClick={close}
                                 className="block py-1 text-sm text-muted"
                               >
-                                {product.name}
-                              </Link>
-                            </li>
-                          ))}
-                          {category.sets.map((set) => (
-                            <li key={`m-set-${set.id}`}>
-                              <Link
-                                href={paths.ensemble(locale, set.slug)}
-                                onClick={close}
-                                className="block py-1 text-sm text-muted"
-                              >
-                                {set.name} <span className="text-xs">({nav.ensemble})</span>
+                                {sousCategorie.name}
                               </Link>
                             </li>
                           ))}

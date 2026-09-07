@@ -282,7 +282,10 @@ export const paths = {
   home: (l: Locale) => `/${l}`,
   aPropos: (l: Locale) => `/${l}/a-propos`,
   produits: (l: Locale) => `/${l}/produits`,
-  categorie: (l: Locale, slug: string) => `/${l}/produits/${slug}`,
+  // Same URL shape as before (/produits/:slug) — renamed from `categorie` now
+  // that the slug identifies a sous-catégorie, not a category (categories
+  // aren't clickable/don't have their own page anymore).
+  sousCategorie: (l: Locale, slug: string) => `/${l}/produits/${slug}`,
   produit: (l: Locale, slug: string) => `/${l}/produit/${slug}`,
   ensemble: (l: Locale, slug: string) => `/${l}/ensemble/${slug}`,
   collection: (l: Locale) => `/${l}/collection`,

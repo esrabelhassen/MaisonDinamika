@@ -10,13 +10,11 @@ import type { CategoryNav } from './types'
 export default function ProduitsDropdown({
   locale,
   label,
-  ensembleLabel,
   categories,
   solid,
 }: {
   locale: Locale
   label: string
-  ensembleLabel: string
   categories: CategoryNav[]
   /** Whether the header is currently on its solid (non-transparent) look. */
   solid: boolean
@@ -75,36 +73,18 @@ export default function ProduitsDropdown({
           <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-8 sm:grid-cols-3 lg:grid-cols-4">
             {categories.map((category) => (
               <div key={category.id} className="flex max-h-80 flex-col">
-                <Link
-                  href={paths.categorie(locale, category.slug)}
-                  onClick={close}
-                  className="mb-3 font-display text-lg text-ink hover:text-glaze-deep"
-                >
-                  {category.name}
-                </Link>
+                {/* Category is a grouping label only — not a link, has no page
+                    of its own. Only its sous-catégories below are clickable. */}
+                <div className="mb-3 font-display text-lg text-ink">{category.name}</div>
                 <ul className="flex-1 space-y-2 overflow-y-auto pr-1">
-                  {category.products.map((product) => (
-                    <li key={`product-${product.id}`}>
+                  {category.sousCategories.map((sousCategorie) => (
+                    <li key={`sc-${sousCategorie.id}`}>
                       <Link
-                        href={paths.produit(locale, product.slug)}
+                        href={paths.sousCategorie(locale, sousCategorie.slug)}
                         onClick={close}
                         className="text-sm text-muted hover:text-ink"
                       >
-                        {product.name}
-                      </Link>
-                    </li>
-                  ))}
-                  {category.sets.map((set) => (
-                    <li key={`set-${set.id}`}>
-                      <Link
-                        href={paths.ensemble(locale, set.slug)}
-                        onClick={close}
-                        className="text-sm text-muted hover:text-ink"
-                      >
-                        {set.name}{' '}
-                        <span className="ms-1 rounded-sm bg-glaze-light px-1.5 py-0.5 text-xs text-glaze-dark">
-                          {ensembleLabel}
-                        </span>
+                        {sousCategorie.name}
                       </Link>
                     </li>
                   ))}

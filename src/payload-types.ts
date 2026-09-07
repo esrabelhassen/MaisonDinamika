@@ -72,6 +72,7 @@ export interface Config {
     customers: Customer;
     media: Media;
     categories: Category;
+    'sous-categories': SousCategory;
     products: Product;
     sets: Set;
     collections: Collection;
@@ -81,12 +82,17 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    categories: {
+      sousCategories: 'sous-categories';
+    };
+  };
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     customers: CustomersSelect<false> | CustomersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'sous-categories': SousCategoriesSelect<false> | SousCategoriesSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
     sets: SetsSelect<false> | SetsSelect<true>;
     collections: CollectionsSelect<false> | CollectionsSelect<true>;
@@ -298,6 +304,33 @@ export interface Category {
   id: number;
   name: string;
   slug?: string | null;
+  /**
+   * Ordre dans le menu Produits
+   */
+  order?: number | null;
+  /**
+   * Sous-catégories de cette catégorie (ajoutées/gérées depuis Sous-catégories).
+   */
+  sousCategories?: {
+    docs?: (number | SousCategory)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sous-categories".
+ */
+export interface SousCategory {
+  id: number;
+  name: string;
+  slug?: string | null;
+  /**
+   * Catégorie parente (affichée dans le menu Produits)
+   */
+  category: number | Category;
   /**
    * Ordre dans le menu Produits
    */
@@ -520,6 +553,10 @@ export interface PayloadLockedDocument {
         value: number | Category;
       } | null)
     | ({
+        relationTo: 'sous-categories';
+        value: number | SousCategory;
+      } | null)
+    | ({
         relationTo: 'products';
         value: number | Product;
       } | null)
@@ -703,6 +740,19 @@ export interface MediaSelect<T extends boolean = true> {
 export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   slug?: T;
+  order?: T;
+  sousCategories?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sous-categories_select".
+ */
+export interface SousCategoriesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  category?: T;
   order?: T;
   products?: T;
   sets?: T;

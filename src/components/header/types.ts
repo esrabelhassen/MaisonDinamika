@@ -10,9 +10,9 @@ export type NavItem = {
 export type CategoryNav = {
   id: number
   name: string
-  slug: string
-  products: NavItem[]
-  sets: NavItem[]
+  /** Category itself has no page/slug worth linking to anymore — it's a
+   * grouping label in the menu; only its sous-catégories are clickable. */
+  sousCategories: NavItem[]
 }
 
 export type ContactData = {

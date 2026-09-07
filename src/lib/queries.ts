@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/i18n'
-import type { Category, Collection, Product, Set } from '@/payload-types'
+import type { Category, Collection, Product, Set, SousCategory } from '@/payload-types'
 import { allGalleryImages, collectionBandImages, firstCardImage } from '@/lib/media'
 import type { BandImage, ImageRef } from '@/lib/media'
 import type { CatalogCardItem } from '@/components/catalog/CatalogCard'
@@ -28,74 +28,85 @@ export function toCatalogItem(kind: 'product' | 'set', doc: Product | Set): Cata
   }
 }
 
-function publishedItems(category: Category): CatalogCardItem[] {
-  const products = (category.products ?? [])
+function publishedItems(sousCategorie: SousCategory): CatalogCardItem[] {
+  const products = (sousCategorie.products ?? [])
     .filter((p): p is Product => isDoc<Product>(p))
     .filter((p) => p.status === 'published')
     .map((p) => toCatalogItem('product', p))
-  const sets = (category.sets ?? [])
+  const sets = (sousCategorie.sets ?? [])
     .filter((s): s is Set => isDoc<Set>(s))
     .filter((s) => s.status === 'published')
     .map((s) => toCatalogItem('set', s))
   return [...products, ...sets]
 }
 
-export type CategoryListing = { id: number; name: string; slug: string; order: number }
-
-/** Plain category list — no items populated, for lightweight uses (nav, breadcrumbs). */
-export async function getCategories(locale: Locale): Promise<CategoryListing[]> {
-  const payload = await client()
-  const { docs } = await payload.find({
-    collection: 'categories',
-    sort: 'order',
-    locale,
-    limit: 100,
-    depth: 0,
-    overrideAccess: false,
-  })
-  return docs.map((c) => ({ id: c.id, name: c.name, slug: c.slug ?? '', order: c.order ?? 0 }))
+export type SousCategorieListing = { id: number; name: string; slug: string; order: number }
+export type SousCategorieWithItems = SousCategorieListing & { items: CatalogCardItem[] }
+export type CategoryWithSousCategories = {
+  id: number
+  name: string
+  order: number
+  sousCategories: SousCategorieWithItems[]
 }
 
-export type CategoryWithItems = CategoryListing & { items: CatalogCardItem[] }
-
-/** Every category with its published products+sets populated — feeds the produits index. */
-export async function getAllCatalog(locale: Locale): Promise<CategoryWithItems[]> {
+/** Every category, each with its sous-catégories (each carrying its own
+ * published products+sets) — feeds the produits index. Categories themselves
+ * have no page/slug worth exposing anymore — only their sous-catégories do. */
+export async function getAllCatalog(locale: Locale): Promise<CategoryWithSousCategories[]> {
   const payload = await client()
   const { docs } = await payload.find({
-    collection: 'categories',
+    collection: 'sous-categories',
     sort: 'order',
     locale,
     depth: 2,
-    limit: 100,
+    limit: 300,
     overrideAccess: false,
   })
-  return docs.map((c) => ({
-    id: c.id,
-    name: c.name,
-    slug: c.slug ?? '',
-    order: c.order ?? 0,
-    items: publishedItems(c),
-  }))
+
+  const byCategory = new Map<number, CategoryWithSousCategories>()
+  for (const doc of docs) {
+    const category = doc.category
+    if (!isDoc<Category>(category)) continue // unresolved/deleted parent — skip defensively
+    let bucket = byCategory.get(category.id)
+    if (!bucket) {
+      bucket = { id: category.id, name: category.name, order: category.order ?? 0, sousCategories: [] }
+      byCategory.set(category.id, bucket)
+    }
+    bucket.sousCategories.push({
+      id: doc.id,
+      name: doc.name,
+      slug: doc.slug ?? '',
+      order: doc.order ?? 0,
+      items: publishedItems(doc),
+    })
+  }
+
+  return [...byCategory.values()].sort((a, b) => a.order - b.order)
 }
 
-export async function getCategoryBySlug(slug: string, locale: Locale): Promise<CategoryWithItems | null> {
+export type SousCategorieWithParent = SousCategorieWithItems & { categoryName: string }
+
+/** A single sous-catégorie by its slug — feeds /produits/[sousCategorieSlug]. */
+export async function getSousCategorieBySlug(slug: string, locale: Locale): Promise<SousCategorieWithParent | null> {
   const payload = await client()
   const { docs } = await payload.find({
-    collection: 'categories',
+    collection: 'sous-categories',
     where: { slug: { equals: slug } },
     locale,
     depth: 2,
     limit: 1,
     overrideAccess: false,
   })
-  const category = docs[0]
-  if (!category) return null
+  const doc = docs[0]
+  if (!doc) return null
+  const category = doc.category
   return {
-    id: category.id,
-    name: category.name,
-    slug: category.slug ?? '',
-    order: category.order ?? 0,
-    items: publishedItems(category),
+    id: doc.id,
+    name: doc.name,
+    slug: doc.slug ?? '',
+    order: doc.order ?? 0,
+    categoryName: isDoc<Category>(category) ? category.name : '',
+    items: publishedItems(doc),
   }
 }
 
