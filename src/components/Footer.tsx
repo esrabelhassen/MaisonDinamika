@@ -3,8 +3,6 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/i18n'
 import { getNavDict, paths } from '@/lib/i18n'
-import { resolveLogo } from '@/lib/media'
-import Logo from '@/components/Logo'
 
 type ContactLinkType = 'phone' | 'email' | 'facebook' | 'instagram'
 type ContactLink = { type: ContactLinkType; href: string; label: string }
@@ -25,7 +23,6 @@ export default async function Footer({ locale }: { locale: Locale }) {
   ])
 
   const brandName = settings.brandName || 'Maison Dinamika'
-  const logo = resolveLogo(settings.logo, brandName)
 
   const contactLinks: ContactLink[] = [
     // Visible label, not just an aria-label on an icon-only button — "Téléphone
@@ -84,58 +81,39 @@ export default async function Footer({ locale }: { locale: Locale }) {
           ))}
         </div>
 
-        <div className="flex flex-col gap-10 pt-14 sm:flex-row sm:items-center sm:justify-between">
-          <Logo
-            locale={locale}
-            logo={logo}
-            brandName={brandName}
-            // The footer has no fixed-height bar to overflow (unlike the header),
-            // so it just gets a generous, fully-contained size: 64px mobile, 96px
-            // from `lg` up.
-            heightClassName="h-16 lg:h-24"
-            textClassName="text-lg"
-            linkClassName="text-paper"
-            // The footer background is dark (bg-ink); an uploaded mark is very
-            // likely a dark/monochrome logotype (matching the header's ink-coloured
-            // treatment), so it gets a small light backing chip here instead of a
-            // colour-guessing CSS filter — legible regardless of the logo's actual
-            // colours, and harmless for a light or multi-colour mark too.
-            imageClassName="rounded-lg bg-paper/95 p-2"
-          />
-          {contactLinks.length > 0 && (
-            <div>
-              <div className="mb-3 text-xs uppercase tracking-[0.14em] text-paper/50">{nav.contact}</div>
-              <ul className="flex flex-wrap items-center gap-3">
-                {contactLinks.map((link) => {
-                  // Facebook/Instagram leave the site; phone/email hand off to the
-                  // device's own dialer/mail app, so only the two web links get
-                  // target=_blank (opening a tel:/mailto: link in a new tab would
-                  // just leave a blank tab behind).
-                  const external = link.type === 'facebook' || link.type === 'instagram'
-                  return (
-                    <li key={link.href}>
-                      {/* Icon + visible label as ONE link — the whole pill is
-                          clickable, not just the small circle around the icon. */}
-                      <a
-                        href={link.href}
-                        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                        className="group flex items-center gap-2.5 rounded-full border border-paper/25 py-1.5 pe-4 ps-1.5 text-sm text-paper/85 transition-colors hover:border-paper hover:text-paper motion-reduce:transition-none"
+        {contactLinks.length > 0 && (
+          <div className="pt-14">
+            <div className="mb-3 text-xs uppercase tracking-[0.14em] text-paper/50">{nav.contact}</div>
+            <ul className="flex flex-wrap items-center gap-3">
+              {contactLinks.map((link) => {
+                // Facebook/Instagram leave the site; phone/email hand off to the
+                // device's own dialer/mail app, so only the two web links get
+                // target=_blank (opening a tel:/mailto: link in a new tab would
+                // just leave a blank tab behind).
+                const external = link.type === 'facebook' || link.type === 'instagram'
+                return (
+                  <li key={link.href}>
+                    {/* Icon + visible label as ONE link — the whole pill is
+                        clickable, not just the small circle around the icon. */}
+                    <a
+                      href={link.href}
+                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                      className="group flex items-center gap-2.5 rounded-full border border-paper/25 py-1.5 pe-4 ps-1.5 text-sm text-paper/85 transition-colors hover:border-paper hover:text-paper motion-reduce:transition-none"
+                    >
+                      <span
+                        aria-hidden
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-paper/30 text-paper/70 transition-colors group-hover:border-paper group-hover:text-paper motion-reduce:transition-none"
                       >
-                        <span
-                          aria-hidden
-                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-paper/30 text-paper/70 transition-colors group-hover:border-paper group-hover:text-paper motion-reduce:transition-none"
-                        >
-                          <ContactIcon type={link.type} />
-                        </span>
-                        {link.label}
-                      </a>
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          )}
-        </div>
+                        <ContactIcon type={link.type} />
+                      </span>
+                      {link.label}
+                    </a>
+                  </li>
+                )
+              })}
+            </ul>
+          </div>
+        )}
 
         <div className="mt-10 border-t border-paper/10 pt-6 text-xs text-paper/60">
           © {year} {brandName}. {nav.droitsReserves}
