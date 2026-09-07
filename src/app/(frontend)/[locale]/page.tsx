@@ -4,7 +4,12 @@ import { notFound } from 'next/navigation'
 import { isValidLocale } from '@/lib/i18n'
 import type { Locale } from '@/lib/i18n'
 import { getNavDict } from '@/lib/i18n'
-import Hero from '@/components/hero/Hero'
+// RE-ENABLE THE 3D DISH HERO: swap the import below for
+// `import Hero from '@/components/hero/Hero'`, and swap the `<RoomTour ... />`
+// render for `<Hero ... />` (same props on both) — that's the whole toggle.
+// The dish hero files are untouched and still compile; this is the only place
+// that stopped mounting it.
+import RoomTour from '@/components/hero/RoomTour'
 import Nouveaute from '@/components/home/Nouveaute'
 import type { NouveauteItem } from '@/components/home/Nouveaute'
 import Testimonials from '@/components/home/Testimonials'
@@ -82,7 +87,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           this content filled in yet. `homepage.hero.*` still exists in the
           schema and is still editable in /admin, but nothing reads it anymore —
           only worth restoring if you want it CMS-editable again later. */}
-      <Hero
+      <RoomTour
         locale={locale}
         eyebrow="L’art de la table"
         headline="Composez. Harmonisez. Recevez."
