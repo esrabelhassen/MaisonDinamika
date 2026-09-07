@@ -28,7 +28,9 @@ export default async function Footer({ locale }: { locale: Locale }) {
   const logo = resolveLogo(settings.logo, brandName)
 
   const contactLinks: ContactLink[] = [
-    contact.phone ? { type: 'phone', href: `tel:${contact.phone}`, label: contact.phone } : null,
+    // Visible label, not just an aria-label on an icon-only button — "Téléphone
+    // : <number>" reads as a phone link on sight, not a mystery icon.
+    contact.phone ? { type: 'phone', href: `tel:${contact.phone}`, label: `${nav.telephone} : ${contact.phone}` } : null,
     contact.email ? { type: 'email', href: `mailto:${contact.email}`, label: contact.email } : null,
     contact.facebook ? { type: 'facebook', href: contact.facebook, label: 'Facebook' } : null,
     contact.instagram ? { type: 'instagram', href: contact.instagram, label: 'Instagram' } : null,
@@ -101,28 +103,37 @@ export default async function Footer({ locale }: { locale: Locale }) {
             imageClassName="rounded-lg bg-paper/95 p-2"
           />
           {contactLinks.length > 0 && (
-            <ul className="flex flex-wrap items-center gap-3">
-              {contactLinks.map((link) => {
-                // Facebook/Instagram leave the site; phone/email hand off to the
-                // device's own dialer/mail app, so only the two web links get
-                // target=_blank (opening a tel:/mailto: link in a new tab would
-                // just leave a blank tab behind).
-                const external = link.type === 'facebook' || link.type === 'instagram'
-                return (
-                  <li key={link.href}>
-                    <a
-                      href={link.href}
-                      aria-label={link.label}
-                      title={link.label}
-                      {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                      className="flex h-10 w-10 items-center justify-center rounded-full border border-paper/30 text-paper/70 transition-colors hover:border-paper hover:text-paper motion-reduce:transition-none"
-                    >
-                      <ContactIcon type={link.type} />
-                    </a>
-                  </li>
-                )
-              })}
-            </ul>
+            <div>
+              <div className="mb-3 text-xs uppercase tracking-[0.14em] text-paper/50">{nav.contact}</div>
+              <ul className="flex flex-wrap items-center gap-3">
+                {contactLinks.map((link) => {
+                  // Facebook/Instagram leave the site; phone/email hand off to the
+                  // device's own dialer/mail app, so only the two web links get
+                  // target=_blank (opening a tel:/mailto: link in a new tab would
+                  // just leave a blank tab behind).
+                  const external = link.type === 'facebook' || link.type === 'instagram'
+                  return (
+                    <li key={link.href}>
+                      {/* Icon + visible label as ONE link — the whole pill is
+                          clickable, not just the small circle around the icon. */}
+                      <a
+                        href={link.href}
+                        {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                        className="group flex items-center gap-2.5 rounded-full border border-paper/25 py-1.5 pe-4 ps-1.5 text-sm text-paper/85 transition-colors hover:border-paper hover:text-paper motion-reduce:transition-none"
+                      >
+                        <span
+                          aria-hidden
+                          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-paper/30 text-paper/70 transition-colors group-hover:border-paper group-hover:text-paper motion-reduce:transition-none"
+                        >
+                          <ContactIcon type={link.type} />
+                        </span>
+                        {link.label}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
           )}
         </div>
 
