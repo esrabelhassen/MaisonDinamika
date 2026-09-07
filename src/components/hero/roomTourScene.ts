@@ -6,7 +6,7 @@
 // visibility/StrictMode-guard pattern verbatim — but this file is entirely
 // standalone: it does not import from, or get imported by, heroScene.ts.
 import type * as ThreeTypes from 'three'
-import { computeCameraState, IMAGE_ASPECT, PARALLAX_STRENGTH } from './roomTourCamera'
+import { IMAGE_ASPECT, IMAGE_HEIGHT, IMAGE_WIDTH, PARALLAX_STRENGTH, computeCameraState } from './roomTourCamera'
 
 type THREE = typeof ThreeTypes
 
@@ -44,7 +44,12 @@ void main() {
 // by the JS below — CSS's fallback path uses the same STOPS in top-down
 // image-space directly (that's what background-position expects), so the
 // top-down → v-space flip is kept local to this GL-only file.
-const FRAGMENT_SHADER = `
+//
+// Shared by both fragment shader variants below: the camera math (screen UV →
+// the depth-parallaxed image UV to sample) and the color grade (contrast/
+// saturation lift + a soft vignette — cheap, just math on an already-sampled
+// color, no extra texture reads, so both tiers get it).
+const SHADER_COMMON = `
 uniform sampler2D uColorMap;
 uniform sampler2D uDepthMap;
 uniform vec2 uCenter;
@@ -54,9 +59,10 @@ uniform vec2 uNudge;
 uniform float uParallaxStrength;
 uniform float uImageAspect;
 uniform float uScreenAspect;
+uniform vec2 uImageSize;
 varying vec2 vUv;
 
-void main() {
+vec2 computeFinalUV() {
   vec2 p = vUv - 0.5;
   // Aspect-correct so zoom stays isotropic (a round area on screen samples a
   // round — not stretched — area of the image) regardless of viewport shape.
@@ -76,9 +82,103 @@ void main() {
   float depth = texture2D(uDepthMap, baseUV).r; // white(1)=near, black(0)=far
 
   vec2 parallax = uNudge * depth * uParallaxStrength;
-  vec2 finalUV = clamp(baseUV + parallax, 0.0, 1.0);
+  return clamp(baseUV + parallax, 0.0, 1.0);
+}
 
-  gl_FragColor = vec4(texture2D(uColorMap, finalUV).rgb, 1.0);
+vec3 grade(vec3 color) {
+  color = clamp((color - 0.5) * 1.05 + 0.5, 0.0, 1.0);
+  float luma = dot(color, vec3(0.299, 0.587, 0.114));
+  color = mix(vec3(luma), color, 1.08);
+  float vignette = smoothstep(0.95, 0.35, length(vUv - 0.5));
+  color *= mix(0.9, 1.0, vignette);
+  return clamp(color, 0.0, 1.0);
+}
+`
+
+// FAST variant (mobile/low-power tier, matching heroScene.ts's own desktop/
+// mobile split — see getTier() there): one texture2D tap for color, one for
+// depth. Cheapest possible correct render of this effect.
+const FRAGMENT_SHADER_FAST =
+  SHADER_COMMON +
+  `
+void main() {
+  vec2 finalUV = computeFinalUV();
+  vec3 color = texture2D(uColorMap, finalUV).rgb;
+  gl_FragColor = vec4(grade(color), 1.0);
+}
+`
+
+// HQ variant (desktop only): the source photo is 1584×672 — at BASE_ZOOM
+// (~3×, more on the tightest stops) that's well under 1:1 texel-to-pixel on
+// anything wider than a phone, so a single bilinear tap reads soft (confirmed
+// by screenshotting a zoomed stop against the raw source). Two fixes on top
+// of the shared camera math, working with the SAME asset (no new image):
+// bicubic resampling (four bilinear taps arranged to approximate a
+// Catmull-Rom filter — the standard "cheap bicubic on top of hardware
+// bilinear" trick, smoother than plain bilinear when magnifying) and a light
+// unsharp mask (pushes each pixel away from a cheap local-average estimate to
+// recover perceived edge contrast). ~8 texture reads/pixel total — measured
+// as real added frame cost (not just dev-mode noise, A/B'd against the FAST
+// variant), which is exactly why this is gated to the desktop tier rather
+// than applied everywhere. Neither trick invents texture detail that isn't
+// there; genuine per-pixel sharpness at these zoom levels would need a
+// meaningfully higher-resolution source image.
+const FRAGMENT_SHADER_HQ =
+  SHADER_COMMON +
+  `
+vec4 cubicWeights(float v) {
+  vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
+  vec4 s = n * n * n;
+  float x = s.x;
+  float y = s.y - 4.0 * s.x;
+  float z = s.z - 4.0 * s.y + 6.0 * s.x;
+  float w = 6.0 - x - y - z;
+  return vec4(x, y, z, w) / 6.0;
+}
+
+vec3 sampleBicubic(sampler2D tex, vec2 uv) {
+  vec2 texSize = uImageSize;
+  vec2 invTexSize = 1.0 / texSize;
+  vec2 coords = uv * texSize - 0.5;
+  vec2 fxy = fract(coords);
+  coords -= fxy;
+
+  vec4 xcubic = cubicWeights(fxy.x);
+  vec4 ycubic = cubicWeights(fxy.y);
+
+  vec4 c = coords.xxyy + vec2(-0.5, 1.5).xyxy;
+  vec4 s = vec4(xcubic.xz + xcubic.yw, ycubic.xz + ycubic.yw);
+  vec4 offset = (c + vec4(xcubic.yw, ycubic.yw) / s) * invTexSize.xxyy;
+
+  vec3 sample0 = texture2D(tex, offset.xz).rgb;
+  vec3 sample1 = texture2D(tex, offset.yz).rgb;
+  vec3 sample2 = texture2D(tex, offset.xw).rgb;
+  vec3 sample3 = texture2D(tex, offset.yw).rgb;
+
+  float sx = s.x / (s.x + s.y);
+  float sy = s.z / (s.z + s.w);
+  return mix(mix(sample3, sample2, sx), mix(sample1, sample0, sx), sy);
+}
+
+void main() {
+  vec2 finalUV = computeFinalUV();
+  vec3 color = sampleBicubic(uColorMap, finalUV);
+
+  // Unsharp mask: a cheap 4-tap cross average stands in for a blurred version
+  // of this pixel; pushing the real sample away from it recovers some of the
+  // edge contrast smoothing softens. Plain bilinear taps here (not another
+  // 4x sampleBicubic call each) — this is just a rough "what's the local
+  // average" reference, it doesn't need bicubic precision.
+  vec2 texel = 1.0 / uImageSize;
+  vec3 blur = (
+    texture2D(uColorMap, finalUV + vec2(texel.x, 0.0)).rgb +
+    texture2D(uColorMap, finalUV - vec2(texel.x, 0.0)).rgb +
+    texture2D(uColorMap, finalUV + vec2(0.0, texel.y)).rgb +
+    texture2D(uColorMap, finalUV - vec2(0.0, texel.y)).rgb
+  ) * 0.25;
+  color += (color - blur) * 0.45;
+
+  gl_FragColor = vec4(grade(color), 1.0);
 }
 `
 
@@ -92,11 +192,15 @@ export async function createRoomTourScene(
   THREE: THREE,
   { canvas, getProgress, onContextLost, colorUrl, depthUrl }: RoomTourSceneOptions,
 ): Promise<RoomTourSceneHandle> {
+  // Same breakpoint heroScene.ts's getTier() uses. Pixel-ratio cap AND shader
+  // choice both key off it, for the same reason: weaker mobile GPUs shouldn't
+  // pay for the desktop-tier's ~8x texture-read HQ pass.
+  const isDesktopTier = window.innerWidth >= 768
+
   // alpha:false — this quad fills the whole frame every pixel, no transparent
   // hero-canvas-over-dreamy-background trick needed here (unlike the dish hero).
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false })
-  const pixelRatioCap = window.innerWidth < 768 ? 1.5 : 2
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatioCap))
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isDesktopTier ? 2 : 1.5))
   renderer.outputEncoding = THREE.sRGBEncoding
 
   const loader = new THREE.TextureLoader()
@@ -125,12 +229,13 @@ export async function createRoomTourScene(
     uParallaxStrength: { value: PARALLAX_STRENGTH },
     uImageAspect: { value: IMAGE_ASPECT },
     uScreenAspect: { value: window.innerWidth / window.innerHeight },
+    uImageSize: { value: new THREE.Vector2(IMAGE_WIDTH, IMAGE_HEIGHT) },
   }
 
   const material = new THREE.ShaderMaterial({
     uniforms,
     vertexShader: VERTEX_SHADER,
-    fragmentShader: FRAGMENT_SHADER,
+    fragmentShader: isDesktopTier ? FRAGMENT_SHADER_HQ : FRAGMENT_SHADER_FAST,
     depthTest: false,
     depthWrite: false,
   })
