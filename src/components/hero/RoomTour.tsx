@@ -304,27 +304,32 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
         {/* Captions — one per stop, all stacked in the same spot; only the
             active one is ever meaningfully opaque (see computeCameraState's
             captionOpacity windows). A translucent chip rather than bare text
-            over the photo, so legibility never depends on what's behind it. */}
+            over the photo, so legibility never depends on what's behind it.
+            Each chip centers itself via left-1/2 + -translate-x-1/2, NOT by
+            relying on a sized ancestor: a wrapper whose only children are all
+            `position: absolute` has no in-flow content to size itself by, so
+            it collapses to 0 width — which silently broke this (each chip's
+            box shrank to just its own padding, with the nowrap text
+            overflowing past it, uncentered) until caught by reading back the
+            actual computed layout rect rather than trusting a screenshot. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-24 z-[2] flex justify-center px-6 sm:bottom-28"
+          className="pointer-events-none absolute inset-x-0 bottom-24 z-[2] h-11 px-6 sm:bottom-28"
         >
-          <div className="relative flex h-11 items-center">
-            {STOPS.map((stop, i) => (
-              <div
-                key={stop.label}
-                ref={(el) => {
-                  captionRefs.current[i] = el
-                }}
-                // TODO(product-links): once each stop has a real product/category
-                // href (see RoomTourStop in roomTourCamera.ts), swap this <div>
-                // for a <Link> here and make the chip pointer-events:auto.
-                className="absolute inset-0 flex items-center whitespace-nowrap rounded-full bg-paper/90 px-5 text-sm uppercase tracking-[0.14em] text-ink opacity-0 shadow-sm backdrop-blur-sm"
-              >
-                {stop.label}
-              </div>
-            ))}
-          </div>
+          {STOPS.map((stop, i) => (
+            <div
+              key={stop.label}
+              ref={(el) => {
+                captionRefs.current[i] = el
+              }}
+              // TODO(product-links): once each stop has a real product/category
+              // href (see RoomTourStop in roomTourCamera.ts), swap this <div>
+              // for a <Link> here and make the chip pointer-events:auto.
+              className="absolute left-1/2 top-0 flex h-11 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-paper/90 px-5 text-sm uppercase tracking-[0.14em] text-ink opacity-0 shadow-sm backdrop-blur-sm"
+            >
+              {stop.label}
+            </div>
+          ))}
         </div>
       </div>
 

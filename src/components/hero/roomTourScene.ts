@@ -86,11 +86,11 @@ vec2 computeFinalUV() {
 }
 
 vec3 grade(vec3 color) {
-  color = clamp((color - 0.5) * 1.05 + 0.5, 0.0, 1.0);
+  color = clamp((color - 0.5) * 1.12 + 0.5, 0.0, 1.0);
   float luma = dot(color, vec3(0.299, 0.587, 0.114));
-  color = mix(vec3(luma), color, 1.08);
-  float vignette = smoothstep(0.95, 0.35, length(vUv - 0.5));
-  color *= mix(0.9, 1.0, vignette);
+  color = mix(vec3(luma), color, 1.14);
+  float vignette = smoothstep(0.95, 0.32, length(vUv - 0.5));
+  color *= mix(0.85, 1.0, vignette);
   return clamp(color, 0.0, 1.0);
 }
 `
@@ -108,21 +108,21 @@ void main() {
 }
 `
 
-// HQ variant (desktop only): the source photo is 1584×672 — at BASE_ZOOM
-// (~3×, more on the tightest stops) that's well under 1:1 texel-to-pixel on
-// anything wider than a phone, so a single bilinear tap reads soft (confirmed
-// by screenshotting a zoomed stop against the raw source). Two fixes on top
-// of the shared camera math, working with the SAME asset (no new image):
-// bicubic resampling (four bilinear taps arranged to approximate a
-// Catmull-Rom filter — the standard "cheap bicubic on top of hardware
-// bilinear" trick, smoother than plain bilinear when magnifying) and a light
-// unsharp mask (pushes each pixel away from a cheap local-average estimate to
-// recover perceived edge contrast). ~8 texture reads/pixel total — measured
-// as real added frame cost (not just dev-mode noise, A/B'd against the FAST
-// variant), which is exactly why this is gated to the desktop tier rather
-// than applied everywhere. Neither trick invents texture detail that isn't
-// there; genuine per-pixel sharpness at these zoom levels would need a
-// meaningfully higher-resolution source image.
+// HQ variant (desktop only): the source photo is 1584×672 — even after
+// BASE_ZOOM was brought down (see roomTourCamera.ts), that's well under 1:1
+// texel-to-pixel on anything wider than a phone, so a single bilinear tap
+// reads soft (confirmed by screenshotting a zoomed stop against the raw
+// source). Three fixes on top of the shared camera math, working with the
+// SAME asset (no new image): bicubic resampling (four bilinear taps
+// arranged to approximate a Catmull-Rom filter — smoother than plain
+// bilinear when magnifying), a fine 1px-radius unsharp mask (edge contrast),
+// and a wider 3px-radius "clarity" pass (mid-frequency local contrast — the
+// bigger lever for a crisp, "could be a render" look). ~13 texture reads/
+// pixel total — measured as real added frame cost (not dev-mode noise, A/B'd
+// against the FAST variant), which is why this whole variant is gated to the
+// desktop tier rather than applied everywhere. None of this invents texture
+// detail that isn't there; genuine per-pixel sharpness at these zoom levels
+// would need a meaningfully higher-resolution source image.
 const FRAGMENT_SHADER_HQ =
   SHADER_COMMON +
   `
@@ -163,20 +163,35 @@ vec3 sampleBicubic(sampler2D tex, vec2 uv) {
 void main() {
   vec2 finalUV = computeFinalUV();
   vec3 color = sampleBicubic(uColorMap, finalUV);
-
-  // Unsharp mask: a cheap 4-tap cross average stands in for a blurred version
-  // of this pixel; pushing the real sample away from it recovers some of the
-  // edge contrast smoothing softens. Plain bilinear taps here (not another
-  // 4x sampleBicubic call each) — this is just a rough "what's the local
-  // average" reference, it doesn't need bicubic precision.
   vec2 texel = 1.0 / uImageSize;
-  vec3 blur = (
+
+  // Fine unsharp mask (1px radius): a cheap 4-tap cross average stands in for
+  // a blurred version of this pixel; pushing the real sample away from it
+  // recovers edge contrast smoothing erases. Plain bilinear taps (not another
+  // 4x sampleBicubic call each) — this is just a rough local-average
+  // reference, it doesn't need bicubic precision.
+  vec3 blurNear = (
     texture2D(uColorMap, finalUV + vec2(texel.x, 0.0)).rgb +
     texture2D(uColorMap, finalUV - vec2(texel.x, 0.0)).rgb +
     texture2D(uColorMap, finalUV + vec2(0.0, texel.y)).rgb +
     texture2D(uColorMap, finalUV - vec2(0.0, texel.y)).rgb
   ) * 0.25;
-  color += (color - blur) * 0.45;
+
+  // Wider "clarity" pass (3px radius, diagonal taps): the same idea at a
+  // larger radius, weighted lighter — recovers mid-frequency local contrast
+  // (the difference between a crisp studio render and a flat, hazy photo)
+  // rather than just single-pixel edges. This is the bigger lever of the two
+  // for "looks CGI-clean" without inventing detail that isn't there.
+  vec2 texel3 = texel * 3.0;
+  vec3 blurFar = (
+    texture2D(uColorMap, finalUV + vec2(texel3.x, texel3.y)).rgb +
+    texture2D(uColorMap, finalUV - vec2(texel3.x, texel3.y)).rgb +
+    texture2D(uColorMap, finalUV + vec2(texel3.x, -texel3.y)).rgb +
+    texture2D(uColorMap, finalUV - vec2(texel3.x, -texel3.y)).rgb
+  ) * 0.25;
+
+  color += (color - blurNear) * 0.65;
+  color += (color - blurFar) * 0.35;
 
   gl_FragColor = vec4(grade(color), 1.0);
 }

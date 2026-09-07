@@ -45,10 +45,12 @@ export const STOPS: RoomTourStop[] = [
 const STOP_PROGRESS = STOPS.map((_, i) => i / (STOPS.length - 1)) // [0, 1/3, 2/3, 1]
 
 // Base "how zoomed in" the tour sits at rest, before per-stop multipliers / the
-// mid-transition dip / the portrait boost below. Tuned so the room always
+// mid-transition dip / the mobile zoom-out below. Tuned so the room always
 // extends past the viewport — see computeCameraState's doc comment for how this
-// combines with screen aspect.
-const BASE_ZOOM = 3.0
+// combines with screen aspect. Was 3.0 — brought down to reduce how hard the
+// 1584×672 source gets magnified (real, measured softness at the old value;
+// see the shader's own quality-pass comment for the rest of that fix).
+const BASE_ZOOM = 2.5
 // How much `zoom` DROPS at the midpoint of a stop→stop transition (a brief pull
 // back before pushing back in on arrival — "move through the space").
 const ZOOM_DIP = 0.55
@@ -79,15 +81,20 @@ function clamp(v: number, lo: number, hi: number) {
   return Math.min(Math.max(v, lo), hi)
 }
 
-/** Narrow/portrait viewports need MORE zoom than wide ones to fill the screen
- * with a single object (the room photo is 2.35:1 — on a narrow phone, showing
- * even "1 zoom unit" worth of width already shows very little of the frame
- * height-wise, so without this a portrait visitor would see more of the room,
- * not less, which is backwards for "each object fills the viewport"). */
-function portraitZoomBoost(screenAspect: number) {
+/** Narrow/portrait viewports get their OWN, wider framing — zoomed OUT
+ * relative to desktop, not in. An earlier version of this boosted zoom on
+ * narrow screens (reasoning: "a single object needs to fill more of a narrow
+ * frame"), but in practice that compounded with the per-stop zoomMultiplier
+ * into an extreme close-up (e.g. ~5.8x effective zoom on "Les vases") that
+ * read as excessively cropped rather than composed — direct user feedback
+ * after seeing it live. This is the fix: phones pull back to roughly 60-70%
+ * of desktop's zoom at the same stop, so more of the surrounding furniture
+ * stays visible and the composition feels like an intentional, spacious shot
+ * rather than a hard crop of the desktop framing. */
+function mobileZoomFactor(screenAspect: number) {
   if (screenAspect >= 0.8) return 1
   const t = clamp((screenAspect - 0.4) / (0.8 - 0.4), 0, 1)
-  return lerp(1.6, 1, t)
+  return lerp(0.62, 1, t)
 }
 
 export type CameraState = {
@@ -112,7 +119,7 @@ export type CameraState = {
 /**
  * Turns scroll progress (0..1 across the whole pinned hero) into where the
  * "camera" is looking. `screenAspect` (viewport width/height) feeds the
- * portrait zoom boost above; `timeMs` (a free-running clock, NOT progress —
+ * mobile zoom-out above; `timeMs` (a free-running clock, NOT progress —
  * typically `performance.now()`) drives the continuous drift/tilt so the shot
  * never goes perfectly static even while progress itself is momentarily still.
  */
@@ -137,7 +144,7 @@ export function computeCameraState(progress: number, screenAspect: number, timeM
 
   const zoomMul = lerp(from.zoomMultiplier, to.zoomMultiplier, t)
   const dip = Math.sin(Math.PI * rawT) // 0 at both ends of the segment, 1 at its midpoint
-  const zoom = (BASE_ZOOM * zoomMul - dip * ZOOM_DIP) * portraitZoomBoost(screenAspect)
+  const zoom = (BASE_ZOOM * zoomMul - dip * ZOOM_DIP) * mobileZoomFactor(screenAspect)
 
   const dirSign = Math.sign(to.center.x - from.center.x) || 1
   const lean = dip * LEAN_AMOUNT * dirSign
