@@ -14,6 +14,27 @@ export const Categories: CollectionConfig = {
   slug: 'categories',
   admin: { useAsTitle: 'name', group: 'Boutique', defaultColumns: ['name', 'slug', 'order'] },
   access: { read: anyone, create: admins, update: admins, delete: admins },
+  hooks: {
+    beforeDelete: [
+      // Sous-catégories require a parent (`category` is `required: true` on
+      // SousCategories — a sous-catégorie with no category has nowhere to
+      // show up in the menu, so it isn't allowed to be null). Postgres's
+      // default FK behavior tries to null that column out when its category
+      // is deleted, which then fails the NOT NULL constraint and blocks the
+      // whole delete — this is exactly the "delete a category → error" bug.
+      // Cascading here instead: a sous-catégorie has no reason to exist once
+      // its category is gone, so remove them together, in the same
+      // transaction (passing `req` through keeps this atomic with the delete
+      // itself — see HOOKS.md's Context / transaction guidance).
+      async ({ req, id }) => {
+        await req.payload.delete({
+          collection: 'sous-categories',
+          where: { category: { equals: id } },
+          req,
+        })
+      },
+    ],
+  },
   fields: [
     { name: 'name', type: 'text', required: true, localized: true },
     slugField('name'),
