@@ -21,17 +21,21 @@
 // the animation entirely, leaving each bloom resting at its 0%/100% keyframe — a
 // still, soft gradient rather than a moving one.
 //
-// Colors: `surface` (warm ivory/cream) and the new single-purpose `dream-gold`
+// Colors: `surface` (warm ivory/cream) and the single-purpose `dream-gold`
 // token (pale gold/sand) carry the warmth; `glaze-light` appears once, at a
-// lower peak alpha, as the "faint slate-blue whisper" the brief allows — the
-// crisp `glaze`/`glaze-deep` accent itself is never used here, so blue stays
-// reserved for foreground buttons/links/focus, not the haze.
+// low peak alpha, as a pale champagne whisper for a touch of tonal variety —
+// the accent itself (`glaze`/`glaze-deep`, now a warm gold rather than the
+// original slate-blue) is never used here, so it stays reserved for
+// foreground buttons/links/focus, not the haze. `glaze-mid` was tried here
+// first but sits too dark/saturated at this alpha — re-contrast-checking (see
+// below) caught it dropping `muted` text to ~4.08:1 against the worst-case
+// blend, under AA; `glaze-light` (much paler) was used instead specifically
+// to keep that check passing.
 //
 // Peak alphas (0.62/0.58/0.22) were contrast-checked at the absolute worst
 // case: all three blooms overlapping at once, sequentially alpha-composited
-// over `paper`. Re-checked again after the paper/surface re-tune (below) —
-// that blend now comes out to ≈ rgb(226,216,192); `ink` on it is ≈10.6:1 and
-// `muted` ≈4.7:1 — both still clear WCAG AA (4.5:1).
+// over `paper`. That blend comes out to ≈ rgb(234,221,185); `ink` on it is
+// ≈11.1:1 and `muted` ≈4.9:1 — both still clear WCAG AA (4.5:1).
 export default function DreamyBackground() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
@@ -49,11 +53,11 @@ export default function DreamyBackground() {
           background: 'radial-gradient(circle, rgba(233,216,168,0.58) 0%, rgba(233,216,168,0) 70%)',
         }}
       />
-      {/* C: faint slate-blue whisper — glaze-light #C8CCD5, kept low-alpha on purpose */}
+      {/* C: pale champagne whisper — glaze-light #EDE0B8, kept low-alpha on purpose */}
       <div
         className="absolute -top-[5vmax] -right-[5vmax] h-[60vmax] w-[60vmax] animate-[dreamy-drift-c_37s_ease-in-out_infinite] rounded-full motion-reduce:animate-none"
         style={{
-          background: 'radial-gradient(circle, rgba(200,204,213,0.22) 0%, rgba(200,204,213,0) 70%)',
+          background: 'radial-gradient(circle, rgba(237,224,184,0.22) 0%, rgba(237,224,184,0) 70%)',
         }}
       />
     </div>

@@ -1,11 +1,12 @@
 // Two place settings, sharing a table — two plate-rim circles overlapping, linked
 // by a thin traced arc with a small spark at the midpoint (the shared reward).
 // Same minimal stroke-line language as the header/footer icons and the collection
-// bands' circular badge, on the same soft radial backdrop the hero's own fallback
-// visual uses (bg-[radial-gradient(...)]) — no photography needed for this page.
+// bands' circular badge, on a soft radial backdrop in the same accent shades as
+// `glaze-light`/`glaze-mid` (a raw gradient can't reference a Tailwind color name,
+// so these are hand-copied hex, not a token) — no photography needed for this page.
 export default function ParrainageIllustration() {
   return (
-    <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2.5rem] bg-[radial-gradient(circle_at_38%_35%,#EEE8DC,#C8CCD5_55%,#77899E_100%)]">
+    <div className="relative mx-auto aspect-square w-full max-w-md overflow-hidden rounded-[2.5rem] bg-[radial-gradient(circle_at_38%_35%,#EEE8DC,#EDE0B8_55%,#A8874A_100%)]">
       <svg
         aria-hidden
         viewBox="0 0 320 320"

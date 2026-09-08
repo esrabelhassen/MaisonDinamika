@@ -81,7 +81,7 @@ export default function CatalogCard({
       <Link href={href} className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glaze focus-visible:ring-offset-2">
         <div
           onPointerMove={handlePointerMove}
-          className="relative aspect-[4/5] overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-inset ring-transparent transition-shadow duration-500 group-hover:shadow-[0_20px_45px_-18px_rgba(94,115,134,0.45)] group-hover:ring-glaze/25 motion-reduce:transition-none"
+          className="relative aspect-[4/5] overflow-hidden rounded-xl bg-surface shadow-sm ring-1 ring-inset ring-transparent transition-shadow duration-500 group-hover:shadow-[0_20px_45px_-18px_rgba(114,88,34,0.45)] group-hover:ring-glaze/25 motion-reduce:transition-none"
         >
           {item.imageUrl && (
             <Image
@@ -100,7 +100,7 @@ export default function CatalogCard({
             className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100 motion-reduce:transition-none"
             style={{
               background:
-                'radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(94,115,134,0.22), transparent 70%)',
+                'radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgba(114,88,34,0.22), transparent 70%)',
             }}
           />
         </div>
@@ -122,7 +122,7 @@ export default function CatalogCard({
         type="button"
         onClick={handleAdd}
         disabled={outOfStock}
-        className="mt-3 w-full border border-glaze py-2.5 text-[11px] uppercase tracking-[0.14em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_8px_20px_-8px_rgba(94,115,134,0.5)] disabled:cursor-not-allowed disabled:border-line disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted disabled:hover:shadow-none motion-reduce:transition-none"
+        className="mt-3 w-full border border-glaze py-2.5 text-[11px] uppercase tracking-[0.14em] text-ink transition-all duration-300 hover:bg-glaze hover:text-paper hover:shadow-[0_8px_20px_-8px_rgba(114,88,34,0.5)] disabled:cursor-not-allowed disabled:border-line disabled:text-muted disabled:hover:bg-transparent disabled:hover:text-muted disabled:hover:shadow-none motion-reduce:transition-none"
       >
         {outOfStock ? labels.outOfStock : justAdded ? labels.added : labels.add}
       </button>
