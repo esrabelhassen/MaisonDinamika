@@ -96,7 +96,7 @@ export default function CollectionPeekRow({
         </button>
       )}
 
-      <div className="relative aspect-[4/5] w-[62vw] max-w-[380px] sm:w-[46vw] md:w-[34vw] lg:w-[27vw]">
+      <div className="relative aspect-[3/2] w-[80vw] max-w-[560px] sm:w-[60vw] md:w-[48vw] lg:w-[40vw]">
         {collections.map((collection, i) => {
           const delta = wrappedDelta(i)
           // Window: only the front card and its immediate two neighbors are
@@ -141,7 +141,7 @@ export default function CollectionPeekRow({
                   src={image.url}
                   alt={image.alt}
                   fill
-                  sizes="(min-width: 1024px) 27vw, (min-width: 640px) 46vw, 62vw"
+                  sizes="(min-width: 1024px) 40vw, (min-width: 640px) 60vw, 80vw"
                   className="object-cover transition-transform duration-700 ease-out motion-reduce:transition-none group-hover:scale-105"
                 />
               )}
