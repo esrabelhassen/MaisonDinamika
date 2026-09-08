@@ -1,7 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/i18n'
-import type { Category, Collection, Product, Set, SousCategory } from '@/payload-types'
+import type { Category, Product, Set, SousCategory } from '@/payload-types'
 import { allGalleryImages, collectionBandImages, firstCardImage } from '@/lib/media'
 import type { BandImage, ImageRef } from '@/lib/media'
 import type { CatalogCardItem } from '@/components/catalog/CatalogCard'
@@ -146,32 +146,65 @@ export async function getProductBySlug(slug: string, locale: Locale): Promise<Pr
   }
 }
 
-export type CollectionBandData = {
+export type CollectionCardData = {
   id: number
   title: string
   order: number
   overlayStyle: 'light' | 'dark'
   images: BandImage[]
+  /** Where clicking this collection's card goes — its linked sous-catégorie's
+   * product listing (/produits/[slug]). */
+  sousCategorieSlug: string
 }
 
-/** Showcase collections (the /collection marquee page), sorted for display order. */
-export async function getCollections(locale: Locale): Promise<CollectionBandData[]> {
+export type CategoryWithCollections = {
+  id: number
+  name: string
+  order: number
+  collections: CollectionCardData[]
+}
+
+/** Showcase collections (the /collection page), grouped by the CATEGORY of
+ * each collection's own linked sous-catégorie — a collection is never tagged
+ * with a category directly, only through what it actually links to (see
+ * Collections.ts). Both the grouping and each card's target come from the
+ * exact same field, so they can never disagree. */
+export async function getCollectionsByCategory(locale: Locale): Promise<CategoryWithCollections[]> {
   const payload = await client()
   const { docs } = await payload.find({
     collection: 'collections',
     sort: 'order',
     locale,
-    depth: 2,
-    limit: 100,
+    // collection -> sousCategorie (1) -> its category (2) -> images/media (also
+    // within 2 of the collection doc) — 3 gives a little headroom above that.
+    depth: 3,
+    limit: 300,
     overrideAccess: false,
   })
-  return docs.map((doc: Collection) => ({
-    id: doc.id,
-    title: doc.title,
-    order: doc.order ?? 0,
-    overlayStyle: doc.overlayStyle ?? 'light',
-    images: collectionBandImages(doc.images, doc.title),
-  }))
+
+  const byCategory = new Map<number, CategoryWithCollections>()
+  for (const doc of docs) {
+    const sousCategorie = doc.sousCategorie
+    if (!isDoc<SousCategory>(sousCategorie)) continue // unresolved/deleted link — skip defensively
+    const category = sousCategorie.category
+    if (!isDoc<Category>(category)) continue
+
+    let bucket = byCategory.get(category.id)
+    if (!bucket) {
+      bucket = { id: category.id, name: category.name, order: category.order ?? 0, collections: [] }
+      byCategory.set(category.id, bucket)
+    }
+    bucket.collections.push({
+      id: doc.id,
+      title: doc.title,
+      order: doc.order ?? 0,
+      overlayStyle: doc.overlayStyle ?? 'light',
+      images: collectionBandImages(doc.images, doc.title),
+      sousCategorieSlug: sousCategorie.slug ?? '',
+    })
+  }
+
+  return [...byCategory.values()].sort((a, b) => a.order - b.order)
 }
 
 export type SetComponentRef = { qty: number; product: { id: number; name: string; slug: string } }

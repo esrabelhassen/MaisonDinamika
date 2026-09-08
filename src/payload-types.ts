@@ -436,6 +436,10 @@ export interface Collection {
    */
   title: string;
   slug?: string | null;
+  /**
+   * Détermine à la fois la section (catégorie) où cette collection apparaît sur /collection, et la page produits vers laquelle elle mène au clic.
+   */
+  sousCategorie: number | SousCategory;
   order?: number | null;
   /**
    * Couleur du texte en surimpression
@@ -815,6 +819,7 @@ export interface SetsSelect<T extends boolean = true> {
 export interface CollectionsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  sousCategorie?: T;
   order?: T;
   overlayStyle?: T;
   images?:
