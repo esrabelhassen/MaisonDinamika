@@ -11,13 +11,10 @@ export default function ProduitsDropdown({
   locale,
   label,
   categories,
-  solid,
 }: {
   locale: Locale
   label: string
   categories: CategoryNav[]
-  /** Whether the header is currently on its solid (non-transparent) look. */
-  solid: boolean
 }) {
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -53,11 +50,7 @@ export default function ProduitsDropdown({
         aria-expanded={open}
         aria-controls="produits-mega-panel"
         onClick={toggle}
-        className={`relative rounded-sm px-1 py-2 transition-colors motion-reduce:transition-none ${
-          solid
-            ? "text-ink after:absolute after:inset-x-1 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-glaze-deep after:transition-transform after:duration-300 after:content-[''] hover:text-glaze-deep hover:after:scale-x-100 motion-reduce:after:transition-none"
-            : 'mix-blend-multiply hover:opacity-80'
-        }`}
+        className="relative rounded-sm px-1 py-2 text-ink transition-colors after:absolute after:inset-x-1 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-glaze-deep after:transition-transform after:duration-300 after:content-[''] hover:text-glaze-deep hover:after:scale-x-100 motion-reduce:transition-none motion-reduce:after:transition-none"
       >
         {label}
       </button>

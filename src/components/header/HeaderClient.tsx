@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
 import type { MouseEvent } from 'react'
 import type { Locale } from '@/lib/i18n'
 import { getNavDict, paths } from '@/lib/i18n'
@@ -17,7 +16,19 @@ import type { CategoryNav, ContactData } from './types'
 // Keep in sync with the `top-20` / `fixed inset-0 …` offsets used by the mega-panel
 // and any hero spacing — this is the single source of truth for the bar's height.
 const BAR_HEIGHT_CLASS = 'h-20'
-const HEADER_HEIGHT_PX = 80 // h-20 = 5rem, assuming the default 16px root font size
+
+// One shared "frosted glass" treatment for the header bar — same recipe on every
+// page and at every scroll position (never a flat opaque color, never fully
+// transparent), which is what used to leave the nav text with no backdrop at all
+// over the room-tour hero. A translucent `paper` tint + blur+saturate lets
+// whatever's behind it (hero photography included) show through softly while
+// staying legible. The tint's opacity was contrast-checked (sRGB relative
+// luminance, the same manual formula used elsewhere in this codebase) against
+// the worst case — pure black directly behind it — and `ink` text still clears
+// ~5.2:1 there, comfortably past the 4.5:1 AA floor for normal text; over the
+// hero's actual (much lighter) photography it's higher still.
+const GLASS_BAR_CLASS =
+  'border-b border-paper/40 bg-paper/65 backdrop-blur-md backdrop-saturate-150 shadow-[0_1px_20px_-6px_rgba(42,38,32,0.15)]'
 
 function prefersReducedMotion() {
   if (typeof window === 'undefined') return false
@@ -42,30 +53,6 @@ export default function HeaderClient({
   const pathname = usePathname()
   const isHome = pathname === paths.home(locale)
 
-  const [scrolled, setScrolled] = useState(false)
-
-  useEffect(() => {
-    if (!isHome) return
-
-    function handleScroll() {
-      // Measure the actual hero section rather than guessing a viewport-height
-      // ratio — "past the hero" should mean past ITS bottom edge, whatever its
-      // real height is. The hero sits at `-mt-20` (pulled up under the fixed
-      // header), so its bottom edge reaches the viewport top after scrolling by
-      // (heroHeight - headerHeight).
-      const heroEl = document.querySelector<HTMLElement>('[data-hero]')
-      const heroHeight = heroEl?.offsetHeight ?? window.innerHeight
-      const threshold = heroHeight - HEADER_HEIGHT_PX
-      setScrolled(window.scrollY > threshold)
-    }
-
-    handleScroll()
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [isHome])
-
-  const solid = !isHome || scrolled
-
   function handleContactClick(event: MouseEvent<HTMLAnchorElement>) {
     if (!isHome) return
     const target = document.getElementById('contact')
@@ -74,23 +61,17 @@ export default function HeaderClient({
     target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' })
   }
 
-  // Solid state gets a premium slide-in underline (an `after:` pseudo-element
-  // scaled from 0 on hover) on top of the existing color transition; skipped in
-  // the transparent-over-hero state, which already has its own opacity-based
-  // hover cue and sits on ever-changing dish imagery a bg-color bar wouldn't
-  // reliably read against.
-  const linkClass = `relative rounded-sm px-1 py-2 transition-colors motion-reduce:transition-none ${
-    solid
-      ? "text-ink after:absolute after:inset-x-1 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-glaze-deep after:transition-transform after:duration-300 after:content-[''] hover:text-glaze-deep hover:after:scale-x-100 motion-reduce:after:transition-none"
-      : 'mix-blend-multiply hover:opacity-80'
-  }`
+  // A premium slide-in underline (an `after:` pseudo-element scaled from 0 on
+  // hover) on top of the color transition — always on now: the glass bar's
+  // contrast is guaranteed regardless of what's behind it (see GLASS_BAR_CLASS),
+  // so there's no more need for the old transparent-state's mix-blend-multiply
+  // fallback, which used to leave legibility at the mercy of whatever hero
+  // photo happened to be underneath.
+  const linkClass =
+    "relative rounded-sm px-1 py-2 text-ink transition-colors after:absolute after:inset-x-1 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-glaze-deep after:transition-transform after:duration-300 after:content-[''] hover:text-glaze-deep hover:after:scale-x-100 motion-reduce:transition-none motion-reduce:after:transition-none"
 
   return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 ${BAR_HEIGHT_CLASS} transition-colors duration-300 motion-reduce:transition-none motion-reduce:duration-0 ${
-        solid ? 'border-b border-line bg-paper' : 'border-b border-transparent bg-transparent'
-      }`}
-    >
+    <header className={`fixed inset-x-0 top-0 z-50 ${BAR_HEIGHT_CLASS} ${GLASS_BAR_CLASS}`}>
       {/* Pinned to the header's own corner (the header is already `fixed`, which
           is what lets an `absolute` child position against it) — deliberately
           OUTSIDE the centered max-w-6xl/px-6 row below, so it sits in the actual
@@ -101,8 +82,7 @@ export default function HeaderClient({
         logo={logo}
         brandName={brandName}
         heightClassName="h-24 lg:h-48"
-        textClassName={`text-xl tracking-wide ${solid ? 'text-ink' : 'mix-blend-multiply'}`}
-        imageClassName={solid ? '' : 'mix-blend-multiply'}
+        textClassName="text-xl tracking-wide text-ink"
         linkClassName="absolute start-4 top-1 z-10"
       />
 
@@ -120,7 +100,7 @@ export default function HeaderClient({
           <Link href={paths.aPropos(locale)} className={linkClass}>
             {nav.aPropos}
           </Link>
-          <ProduitsDropdown locale={locale} label={nav.produits} categories={categories} solid={solid} />
+          <ProduitsDropdown locale={locale} label={nav.produits} categories={categories} />
           <Link href={paths.collection(locale)} className={linkClass}>
             {nav.collection}
           </Link>
@@ -135,7 +115,7 @@ export default function HeaderClient({
           </Link>
         </nav>
 
-        <div className={`flex items-center gap-3 lg:hidden ${solid ? 'text-ink' : 'mix-blend-multiply'}`}>
+        <div className="flex items-center gap-3 text-ink lg:hidden">
           <Link href={paths.panier(locale)} aria-label={nav.panier} className="relative rounded-sm p-2">
             <CartIcon />
             <span className="absolute -end-0.5 -top-0.5 rounded-full bg-glaze px-1 text-[10px] leading-tight text-paper">
