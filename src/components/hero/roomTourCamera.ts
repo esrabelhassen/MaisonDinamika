@@ -10,11 +10,11 @@
 
 export type RoomTourStop = {
   label: string
-  /** TODO(product-links): once specific products/categories are picked for each
-   * stop (e.g. "Les vases" → a vases category, "L'art de la table" → the dining
-   * set), wire this to a real href and render the caption as a Link. Left
-   * `undefined` on purpose for now — every stop renders as a plain caption. */
-  href?: string
+  /** Sous-catégorie slug this stop links to (see `src/lib/i18n.ts`'s
+   * `paths.sousCategorie`, which prefixes it with the current locale — the
+   * slug itself isn't localized, see SousCategories' `slugField`). Every
+   * stop is clickable; there's no caption-only variant to fall back to. */
+  slug: string
   /** Fraction across the 1584×672 room photo, authored top-down/left-right like
    * normal image coordinates (0,0 = top-left) — NOT WebGL UV space. The GL path
    * flips `y` to v-space itself; the CSS path (background-position) uses these
@@ -35,11 +35,14 @@ export const IMAGE_ASPECT = IMAGE_WIDTH / IMAGE_HEIGHT
 // regardless of site direction — see RoomTour.tsx's RTL note: mirroring a real
 // photograph (and its depth map) to match reading direction was judged not
 // worth the risk for a decorative hero, so /ar plays the same tour, same order.
+// Each stop's `slug` is a real sous-catégorie (see src/collections/SousCategories.ts),
+// resolved through `paths.sousCategorie` in the consuming components (RoomTour.tsx)
+// so the link picks up the current locale — this file stays framework-free.
 export const STOPS: RoomTourStop[] = [
-  { label: 'Le plaid', center: { x: 0.13, y: 0.68 }, zoomMultiplier: 1.0 },
-  { label: 'Les vases', center: { x: 0.42, y: 0.5 }, zoomMultiplier: 1.2 },
-  { label: 'La plante', center: { x: 0.58, y: 0.48 }, zoomMultiplier: 0.95 },
-  { label: 'L’art de la table', center: { x: 0.83, y: 0.62 }, zoomMultiplier: 0.85 },
+  { label: 'Le plaid', slug: 'jets-de-canap', center: { x: 0.13, y: 0.68 }, zoomMultiplier: 1.0 },
+  { label: 'Les vases', slug: 'vases-dcoratifs', center: { x: 0.42, y: 0.5 }, zoomMultiplier: 1.2 },
+  { label: 'La plante', slug: 'pots-avec-plantes', center: { x: 0.58, y: 0.48 }, zoomMultiplier: 0.95 },
+  { label: 'L’art de la table', slug: 'services-par-set', center: { x: 0.83, y: 0.62 }, zoomMultiplier: 0.85 },
 ]
 
 const STOP_PROGRESS = STOPS.map((_, i) => i / (STOPS.length - 1)) // [0, 1/3, 2/3, 1]

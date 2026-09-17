@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import type { Locale } from '@/lib/i18n'
+import { paths } from '@/lib/i18n'
 import type { RoomTourSceneHandle } from './roomTourScene'
 import { IMAGE_HEIGHT, IMAGE_WIDTH, STOPS, computeCameraState } from './roomTourCamera'
 import type { CameraState } from './roomTourCamera'
@@ -87,7 +88,7 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
   const wrapRef = useRef<HTMLDivElement>(null)
   const fallbackRef = useRef<HTMLDivElement>(null)
   const hintRef = useRef<HTMLDivElement>(null)
-  const captionRefs = useRef<(HTMLDivElement | null)[]>([])
+  const captionRefs = useRef<(HTMLAnchorElement | null)[]>([])
 
   const [webglFailed, setWebglFailed] = useState(false)
   // Starts `false` — matches what SSR renders, since it has no `window` — and
@@ -311,24 +312,30 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
             it collapses to 0 width — which silently broke this (each chip's
             box shrank to just its own padding, with the nowrap text
             overflowing past it, uncentered) until caught by reading back the
-            actual computed layout rect rather than trusting a screenshot. */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-24 z-[2] h-11 px-6 sm:bottom-28"
-        >
+            actual computed layout rect rather than trusting a screenshot.
+            Each chip is a real Link to its sous-catégorie now — the wrapper
+            stays pointer-events:none (it spans the full row, most of which is
+            empty) and only the individual chip re-enables pointer-events, so
+            hovering empty space beside a caption doesn't swallow clicks meant
+            for the photo/scroll below it. Opacity is still driven imperatively
+            via captionRefs (see updateCosmetics above), unaffected by this
+            <div>→<Link> swap since Next forwards the ref to the underlying
+            <a>. No `aria-hidden` on this wrapper any more — it now holds real
+            focusable links, and hiding an ancestor of focusable content from
+            assistive tech (while leaving it mouse-clickable and tab-reachable)
+            is itself an a11y violation, not a neutral no-op. */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-24 z-[2] h-11 px-6 sm:bottom-28">
           {STOPS.map((stop, i) => (
-            <div
+            <Link
               key={stop.label}
+              href={paths.sousCategorie(locale, stop.slug)}
               ref={(el) => {
                 captionRefs.current[i] = el
               }}
-              // TODO(product-links): once each stop has a real product/category
-              // href (see RoomTourStop in roomTourCamera.ts), swap this <div>
-              // for a <Link> here and make the chip pointer-events:auto.
-              className="absolute left-1/2 top-0 flex h-11 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-paper/90 px-5 text-sm uppercase tracking-[0.14em] text-ink opacity-0 shadow-sm backdrop-blur-sm"
+              className="pointer-events-auto absolute left-1/2 top-0 flex h-11 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-paper/90 px-5 text-sm uppercase tracking-[0.14em] text-ink opacity-0 shadow-sm backdrop-blur-sm transition-colors hover:bg-paper motion-reduce:transition-none"
             >
               {stop.label}
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -387,24 +394,30 @@ function StaticRoomTour({ locale, eyebrow, headline, sub, ctaLabel, ctaLink }: R
 
       <div className="mx-auto mt-14 grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2">
         {STOPS.map((stop) => (
-          <figure key={stop.label} className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-line">
+          <Link
+            key={stop.label}
+            href={paths.sousCategorie(locale, stop.slug)}
+            className="group relative block aspect-[4/3] overflow-hidden rounded-2xl border border-line focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-glaze focus-visible:ring-offset-2"
+          >
             {/* Plain <img>, not next/image: this is a single static local asset
                 outside next.config.ts's images.localPatterns (deliberately
                 scoped to /api/media/file/** for Payload-served media only) —
                 widening that shared config for one hero asset felt like a
                 bigger, separate decision than this task should make silently. */}
+            {/* alt="" — the visible caption span below already gives this
+                link its accessible name; alt text here would just repeat it. */}
             <img
               src={COLOR_URL}
-              alt={stop.label}
-              className="absolute inset-0 h-full w-full object-cover"
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
               style={{ objectPosition: `${stop.center.x * 100}% ${stop.center.y * 100}%` }}
               loading="lazy"
               decoding="async"
             />
-            <figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent px-5 py-4 font-display text-lg text-paper">
+            <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-ink/70 to-transparent px-5 py-4 font-display text-lg text-paper">
               {stop.label}
-            </figcaption>
-          </figure>
+            </span>
+          </Link>
         ))}
       </div>
     </section>
