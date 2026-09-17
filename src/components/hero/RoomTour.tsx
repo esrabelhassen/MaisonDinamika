@@ -134,7 +134,17 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
 
       STOPS.forEach((_, i) => {
         const el = captionRefs.current[i]
-        if (el) el.style.opacity = String(state.captionOpacity[i])
+        if (!el) return
+        const opacity = state.captionOpacity[i]
+        el.style.opacity = String(opacity)
+        // All four chips are stacked at the exact same absolute position (see
+        // the render below), so without this every one of them would sit
+        // pointer-events:auto at once and whichever is LAST in the DOM would
+        // silently eat every click regardless of which caption is actually
+        // showing — the real bug behind "they all take to the same link".
+        // Only the (at most one, per computeCameraState's non-overlapping
+        // windows) chip that's actually visible may receive clicks.
+        el.style.pointerEvents = opacity > 0.5 ? 'auto' : 'none'
       })
 
       const hint = hintRef.current
@@ -315,15 +325,22 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
             actual computed layout rect rather than trusting a screenshot.
             Each chip is a real Link to its sous-catégorie now — the wrapper
             stays pointer-events:none (it spans the full row, most of which is
-            empty) and only the individual chip re-enables pointer-events, so
-            hovering empty space beside a caption doesn't swallow clicks meant
-            for the photo/scroll below it. Opacity is still driven imperatively
-            via captionRefs (see updateCosmetics above), unaffected by this
-            <div>→<Link> swap since Next forwards the ref to the underlying
-            <a>. No `aria-hidden` on this wrapper any more — it now holds real
-            focusable links, and hiding an ancestor of focusable content from
-            assistive tech (while leaving it mouse-clickable and tab-reachable)
-            is itself an a11y violation, not a neutral no-op. */}
+            empty) so hovering empty space beside a caption doesn't swallow
+            clicks meant for the photo/scroll below it. Opacity is still
+            driven imperatively via captionRefs (see updateCosmetics above),
+            unaffected by this <div>→<Link> swap since Next forwards the ref
+            to the underlying <a>. No `aria-hidden` on this wrapper any more —
+            it now holds real focusable links, and hiding an ancestor of
+            focusable content from assistive tech (while leaving it mouse-
+            clickable and tab-reachable) is itself an a11y violation, not a
+            neutral no-op.
+            All four chips share the exact same absolute position (that's the
+            point — only one is ever visible at a time), so `pointer-events`
+            defaults to `none` on the chip itself, NOT `auto`: with four
+            perfectly overlapping links, whichever is last in the DOM would
+            otherwise always win every click regardless of which caption is
+            actually showing. updateCosmetics flips it to `auto` only for the
+            currently-visible one (opacity > 0.5), each frame — see there. */}
         <div className="pointer-events-none absolute inset-x-0 bottom-24 z-[2] h-11 px-6 sm:bottom-28">
           {STOPS.map((stop, i) => (
             <Link
@@ -332,7 +349,7 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
               ref={(el) => {
                 captionRefs.current[i] = el
               }}
-              className="pointer-events-auto absolute left-1/2 top-0 flex h-11 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-paper/90 px-5 text-sm uppercase tracking-[0.14em] text-ink opacity-0 shadow-sm backdrop-blur-sm transition-colors hover:bg-paper motion-reduce:transition-none"
+              className="pointer-events-none absolute left-1/2 top-0 flex h-11 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-paper/90 px-5 text-sm uppercase tracking-[0.14em] text-ink opacity-0 shadow-sm backdrop-blur-sm transition-colors hover:bg-paper motion-reduce:transition-none"
             >
               {stop.label}
             </Link>
