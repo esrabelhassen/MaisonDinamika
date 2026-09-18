@@ -2,8 +2,8 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/i18n'
 import type { Category, Product, Set, SousCategory } from '@/payload-types'
-import { allGalleryImages, collectionBandImages, firstCardImage } from '@/lib/media'
-import type { BandImage, ImageRef } from '@/lib/media'
+import { allGalleryImages, collectionBandImages, firstCardImage, resolveVariants } from '@/lib/media'
+import type { BandImage, ImageRef, VariantGroups } from '@/lib/media'
 import type { CatalogCardItem } from '@/components/catalog/CatalogCard'
 
 function isDoc<T>(value: T | number | null | undefined): value is T {
@@ -118,6 +118,7 @@ export type ProductDetail = {
   stock: number
   description: Product['description']
   images: ImageRef[]
+  variants: VariantGroups
 }
 
 export async function getProductBySlug(slug: string, locale: Locale): Promise<ProductDetail | null> {
@@ -143,6 +144,7 @@ export async function getProductBySlug(slug: string, locale: Locale): Promise<Pr
     stock: product.stock,
     description: product.description,
     images: allGalleryImages(product.images, product.name),
+    variants: resolveVariants(product.variants),
   }
 }
 
@@ -235,6 +237,7 @@ export async function getSetBySlug(slug: string, locale: Locale): Promise<SetDet
     stock: set.stock,
     description: set.description,
     images: allGalleryImages(set.images, set.name),
+    variants: resolveVariants(set.variants),
     components,
   }
 }

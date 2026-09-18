@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { admins } from '../access/admins'
 import { slugField } from '../fields/slug'
+import { variantsField } from '../fields/variantOptions'
 
 // A set = its own price + a list of component items (contents). Own stock (see note in SETUP).
 export const Sets: CollectionConfig = {
@@ -48,6 +49,7 @@ export const Sets: CollectionConfig = {
       fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
     },
     { name: 'stock', type: 'number', required: true, defaultValue: 0, min: 0 },
+    variantsField(),
     { name: 'isNew', label: 'Nouveauté', type: 'checkbox', defaultValue: false, admin: { position: 'sidebar' } },
     {
       name: 'status',

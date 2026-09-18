@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 import { admins } from '../access/admins'
 import { slugField } from '../fields/slug'
+import { variantsField } from '../fields/variantOptions'
 
 // Individual items — sold separately, own price.
 export const Products: CollectionConfig = {
@@ -38,6 +39,7 @@ export const Products: CollectionConfig = {
       fields: [{ name: 'image', type: 'upload', relationTo: 'media', required: true }],
     },
     { name: 'stock', type: 'number', required: true, defaultValue: 0, min: 0 },
+    variantsField(),
     {
       name: 'isNew',
       label: 'Nouveauté',

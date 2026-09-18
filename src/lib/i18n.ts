@@ -34,6 +34,11 @@ type NavDict = {
   diminuerQuantite: string
   augmenterQuantite: string
   contenuDeLEnsemble: string
+  // Product/set variant selector (Pack / Dimension / Couleur — each section is
+  // admin-optional, see VariantSelector.tsx)
+  variantePack: string
+  varianteDimension: string
+  varianteCouleur: string
   aucuneCategorie: string
   aucunProduit: string
   // Auth
@@ -162,6 +167,9 @@ const fr: NavDict = {
   diminuerQuantite: 'Réduire la quantité',
   augmenterQuantite: 'Augmenter la quantité',
   contenuDeLEnsemble: 'Contenu de l’ensemble',
+  variantePack: 'Pack',
+  varianteDimension: 'Dimension',
+  varianteCouleur: 'Couleur',
   aucuneCategorie: 'Aucune catégorie pour l’instant.',
   aucunProduit: 'Aucun produit dans cette catégorie pour l’instant.',
   seConnecter: 'Se connecter',

@@ -374,6 +374,41 @@ export interface Product {
       }[]
     | null;
   stock: number;
+  /**
+   * Chaque section n’apparaît sur la fiche produit que si elle contient au moins une option — inutile de la « désactiver », laissez-la simplement vide.
+   */
+  variants?: {
+    couleurs?:
+      | {
+          label: string;
+          /**
+           * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
+           */
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    dimensions?:
+      | {
+          label: string;
+          /**
+           * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
+           */
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    packs?:
+      | {
+          label: string;
+          /**
+           * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
+           */
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
   isNew?: boolean | null;
   status?: ('draft' | 'published') | null;
   updatedAt: string;
@@ -420,6 +455,41 @@ export interface Set {
       }[]
     | null;
   stock: number;
+  /**
+   * Chaque section n’apparaît sur la fiche produit que si elle contient au moins une option — inutile de la « désactiver », laissez-la simplement vide.
+   */
+  variants?: {
+    couleurs?:
+      | {
+          label: string;
+          /**
+           * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
+           */
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    dimensions?:
+      | {
+          label: string;
+          /**
+           * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
+           */
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+    packs?:
+      | {
+          label: string;
+          /**
+           * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
+           */
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
   isNew?: boolean | null;
   status?: ('draft' | 'published') | null;
   updatedAt: string;
@@ -779,6 +849,31 @@ export interface ProductsSelect<T extends boolean = true> {
         id?: T;
       };
   stock?: T;
+  variants?:
+    | T
+    | {
+        couleurs?:
+          | T
+          | {
+              label?: T;
+              image?: T;
+              id?: T;
+            };
+        dimensions?:
+          | T
+          | {
+              label?: T;
+              image?: T;
+              id?: T;
+            };
+        packs?:
+          | T
+          | {
+              label?: T;
+              image?: T;
+              id?: T;
+            };
+      };
   isNew?: T;
   status?: T;
   updatedAt?: T;
@@ -807,6 +902,31 @@ export interface SetsSelect<T extends boolean = true> {
         id?: T;
       };
   stock?: T;
+  variants?:
+    | T
+    | {
+        couleurs?:
+          | T
+          | {
+              label?: T;
+              image?: T;
+              id?: T;
+            };
+        dimensions?:
+          | T
+          | {
+              label?: T;
+              image?: T;
+              id?: T;
+            };
+        packs?:
+          | T
+          | {
+              label?: T;
+              image?: T;
+              id?: T;
+            };
+      };
   isNew?: T;
   status?: T;
   updatedAt?: T;

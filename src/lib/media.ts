@@ -1,4 +1,4 @@
-import type { Media } from '@/payload-types'
+import type { Media, Product } from '@/payload-types'
 
 export type ImageRef = { url: string; alt: string }
 
@@ -56,6 +56,34 @@ export function resolveLogo(
   const width = (isSvg ? logo.width : (logo.sizes?.thumbnail?.width ?? logo.width)) ?? 3
   const height = (isSvg ? logo.height : (logo.sizes?.thumbnail?.height ?? logo.height)) ?? 1
   return { url, alt: logo.alt || brandName, width, height, isSvg }
+}
+
+export type VariantOption = { label: string; image: ImageRef | null }
+export type VariantGroups = { couleurs: VariantOption[]; dimensions: VariantOption[]; packs: VariantOption[] }
+
+// Products' and Sets' `variants` group has an identical shape (see
+// fields/variantOptions.ts, shared by both collections) — Product's own
+// generated type is reused structurally for Set too rather than duplicating it.
+type VariantRow = NonNullable<NonNullable<Product['variants']>['couleurs']>[number]
+
+function resolveVariantOptions(rows: VariantRow[] | null | undefined): VariantOption[] {
+  return (rows ?? []).map((row) => {
+    if (!isMediaDoc(row.image)) return { label: row.label, image: null }
+    const url = row.image.sizes?.hero?.url ?? row.image.url
+    return { label: row.label, image: url ? { url, alt: row.image.alt || row.label } : null }
+  })
+}
+
+/** A product/set's `variants` group, resolved for the storefront's variant
+ * selector — each section (couleurs/dimensions/packs) is its own array;
+ * an empty array is exactly what "leave this section out of the page"
+ * means, no separate on/off flag (see VariantSelector.tsx). */
+export function resolveVariants(variants: Product['variants'] | null | undefined): VariantGroups {
+  return {
+    couleurs: resolveVariantOptions(variants?.couleurs),
+    dimensions: resolveVariantOptions(variants?.dimensions),
+    packs: resolveVariantOptions(variants?.packs),
+  }
 }
 
 export type BandImage = ImageRef & { width: number; height: number }

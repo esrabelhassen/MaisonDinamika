@@ -4,7 +4,7 @@ import { isValidLocale, getNavDict } from '@/lib/i18n'
 import { getProductBySlug } from '@/lib/queries'
 import type { ProductDetail } from '@/lib/queries'
 import { formatPriceTND } from '@/lib/price'
-import Gallery from '@/components/product/Gallery'
+import ProductDetailLayout from '@/components/product/ProductDetailLayout'
 import AddToCart from '@/components/cart/AddToCart'
 
 type Params = { locale: string; slug: string }
@@ -42,23 +42,12 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-20 sm:py-24">
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
-        <Gallery images={product.images} altFallback={product.name} />
-
-        <div>
-          <h1 className="font-display text-3xl text-ink sm:text-4xl">{product.name}</h1>
-          <div className="mt-3 text-xl text-glaze">{formatPriceTND(product.priceTND)}</div>
-
-          {product.stock <= 0 && (
-            <p className="mt-2 text-sm text-rim-brown">{nav.ruptureDeStock}</p>
-          )}
-
-          {product.description && (
-            <div className="prose prose-neutral mt-8 max-w-none text-muted">
-              <RichText data={product.description} />
-            </div>
-          )}
-
+      <ProductDetailLayout
+        images={product.images}
+        altFallback={product.name}
+        variants={product.variants}
+        labels={{ couleurs: nav.varianteCouleur, dimensions: nav.varianteDimension, packs: nav.variantePack }}
+        belowVariants={
           <div className="mt-8">
             <AddToCart
               itemType="product"
@@ -77,8 +66,21 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
               }}
             />
           </div>
-        </div>
-      </div>
+        }
+      >
+        <h1 className="font-display text-3xl text-ink sm:text-4xl">{product.name}</h1>
+        <div className="mt-3 text-xl text-glaze">{formatPriceTND(product.priceTND)}</div>
+
+        {product.stock <= 0 && (
+          <p className="mt-2 text-sm text-rim-brown">{nav.ruptureDeStock}</p>
+        )}
+
+        {product.description && (
+          <div className="prose prose-neutral mt-8 max-w-none text-muted">
+            <RichText data={product.description} />
+          </div>
+        )}
+      </ProductDetailLayout>
     </div>
   )
 }
