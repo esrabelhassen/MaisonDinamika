@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import type { MouseEvent } from 'react'
 import type { Locale } from '@/lib/i18n'
 import { paths } from '@/lib/i18n'
@@ -80,110 +81,122 @@ export default function MobileDrawer({
         <span aria-hidden className="h-0.5 w-6 bg-current" />
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          <button
-            type="button"
-            aria-label={nav.fermer}
-            onClick={close}
-            className="absolute inset-0 bg-ink/40"
-          />
-          <div
-            id="mobile-drawer"
-            ref={drawerRef}
-            role="dialog"
-            aria-modal="true"
-            aria-label={nav.produits}
-            className="absolute inset-y-0 start-0 flex w-[85vw] max-w-sm flex-col overflow-y-auto bg-paper p-6 shadow-xl"
-          >
+      {/* Portaled straight to <body>, NOT rendered where this component sits in
+          the tree (inside <header>): the header carries `backdrop-blur` for its
+          glass effect, and `backdrop-filter` (like `transform`/`filter`) makes an
+          element a new containing block for any `position: fixed` descendant —
+          so without the portal, this `fixed inset-0` overlay was fixed to the
+          80px-tall header box instead of the viewport, clamping the whole drawer
+          into an invisible sliver at the top (confirmed by screenshot: the panel
+          rendered, but squashed to the header's own height). Portaling out from
+          under the header sidesteps that containing-block rule entirely, and
+          keeps working regardless of whatever CSS the header gets in the future. */}
+      {open &&
+        createPortal(
+          <div className="fixed inset-0 z-50 lg:hidden">
             <button
               type="button"
+              aria-label={nav.fermer}
               onClick={close}
-              className="mb-6 self-end rounded-sm px-2 py-1 text-sm text-muted hover:text-ink"
+              className="absolute inset-0 bg-ink/40"
+            />
+            <div
+              id="mobile-drawer"
+              ref={drawerRef}
+              role="dialog"
+              aria-modal="true"
+              aria-label={nav.produits}
+              className="absolute inset-y-0 start-0 flex w-[85vw] max-w-sm flex-col overflow-y-auto bg-paper p-6 shadow-xl"
             >
-              {nav.fermer}
-            </button>
-
-            <nav className="flex flex-col gap-1 text-lg">
-              <Link href={paths.home(locale)} onClick={close} className="rounded-sm py-3">
-                {nav.accueil}
-              </Link>
-              <Link href={paths.aPropos(locale)} onClick={close} className="rounded-sm py-3">
-                {nav.aPropos}
-              </Link>
-
-              <div>
-                <button
-                  type="button"
-                  aria-expanded={produitsExpanded}
-                  aria-controls="mobile-produits-panel"
-                  onClick={() => setProduitsExpanded((value) => !value)}
-                  className="flex w-full items-center justify-between rounded-sm py-3 text-left"
-                >
-                  {nav.produits}
-                  <span aria-hidden className={produitsExpanded ? 'rotate-180' : ''}>
-                    ⌄
-                  </span>
-                </button>
-                {produitsExpanded && (
-                  <div id="mobile-produits-panel" className="ms-3 flex flex-col gap-4 border-s border-line ps-3 pb-2">
-                    {categories.map((category) => (
-                      <div key={category.id}>
-                        {/* Category is a grouping label only — not a link. */}
-                        <div className="block py-1 font-display text-base">{category.name}</div>
-                        <ul className="flex flex-col gap-1 ps-2">
-                          {category.sousCategories.map((sousCategorie) => (
-                            <li key={`m-sc-${sousCategorie.id}`}>
-                              <Link
-                                href={paths.sousCategorie(locale, sousCategorie.slug)}
-                                onClick={close}
-                                className="block py-1 text-sm text-muted"
-                              >
-                                {sousCategorie.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <Link href={paths.collection(locale)} onClick={close} className="rounded-sm py-3">
-                {nav.collection}
-              </Link>
-              <a
-                href={paths.contact(locale)}
-                onClick={(event) => {
-                  onContactClick(event)
-                  close()
-                }}
-                className="rounded-sm py-3"
+              <button
+                type="button"
+                onClick={close}
+                className="mb-6 self-end rounded-sm px-2 py-1 text-sm text-muted hover:text-ink"
               >
-                {nav.contact}
-              </a>
-              <Link href={paths.panier(locale)} onClick={close} className="rounded-sm py-3">
-                {nav.panier}
-              </Link>
+                {nav.fermer}
+              </button>
 
-              <div className="mt-2 flex flex-col gap-1 border-t border-line pt-2">
-                <AuthNavItem locale={locale} labels={nav} linkClassName="rounded-sm py-3 text-left" onNavigate={close} />
-              </div>
-            </nav>
+              <nav className="flex flex-col gap-1 text-lg">
+                <Link href={paths.home(locale)} onClick={close} className="rounded-sm py-3">
+                  {nav.accueil}
+                </Link>
+                <Link href={paths.aPropos(locale)} onClick={close} className="rounded-sm py-3">
+                  {nav.aPropos}
+                </Link>
 
-            {contactLinks.length > 0 && (
-              <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-4 text-sm text-muted">
-                {contactLinks.map((link) => (
-                  <a key={link.href} href={link.href} className="hover:text-ink">
-                    {link.label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+                <div>
+                  <button
+                    type="button"
+                    aria-expanded={produitsExpanded}
+                    aria-controls="mobile-produits-panel"
+                    onClick={() => setProduitsExpanded((value) => !value)}
+                    className="flex w-full items-center justify-between rounded-sm py-3 text-left"
+                  >
+                    {nav.produits}
+                    <span aria-hidden className={produitsExpanded ? 'rotate-180' : ''}>
+                      ⌄
+                    </span>
+                  </button>
+                  {produitsExpanded && (
+                    <div id="mobile-produits-panel" className="ms-3 flex flex-col gap-4 border-s border-line ps-3 pb-2">
+                      {categories.map((category) => (
+                        <div key={category.id}>
+                          {/* Category is a grouping label only — not a link. */}
+                          <div className="block py-1 font-display text-base">{category.name}</div>
+                          <ul className="flex flex-col gap-1 ps-2">
+                            {category.sousCategories.map((sousCategorie) => (
+                              <li key={`m-sc-${sousCategorie.id}`}>
+                                <Link
+                                  href={paths.sousCategorie(locale, sousCategorie.slug)}
+                                  onClick={close}
+                                  className="block py-1 text-sm text-muted"
+                                >
+                                  {sousCategorie.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                <Link href={paths.collection(locale)} onClick={close} className="rounded-sm py-3">
+                  {nav.collection}
+                </Link>
+                <a
+                  href={paths.contact(locale)}
+                  onClick={(event) => {
+                    onContactClick(event)
+                    close()
+                  }}
+                  className="rounded-sm py-3"
+                >
+                  {nav.contact}
+                </a>
+                <Link href={paths.panier(locale)} onClick={close} className="rounded-sm py-3">
+                  {nav.panier}
+                </Link>
+
+                <div className="mt-2 flex flex-col gap-1 border-t border-line pt-2">
+                  <AuthNavItem locale={locale} labels={nav} linkClassName="rounded-sm py-3 text-left" onNavigate={close} />
+                </div>
+              </nav>
+
+              {contactLinks.length > 0 && (
+                <div className="mt-auto flex flex-wrap gap-x-4 gap-y-2 border-t border-line pt-4 text-sm text-muted">
+                  {contactLinks.map((link) => (
+                    <a key={link.href} href={link.href} className="hover:text-ink">
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )}
     </>
   )
 }
