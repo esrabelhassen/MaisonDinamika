@@ -39,9 +39,9 @@ export const IMAGE_ASPECT = IMAGE_WIDTH / IMAGE_HEIGHT
 // resolved through `paths.sousCategorie` in the consuming components (RoomTour.tsx)
 // so the link picks up the current locale — this file stays framework-free.
 export const STOPS: RoomTourStop[] = [
-  { label: 'Le plaid', slug: 'jets-de-canap', center: { x: 0.13, y: 0.68 }, zoomMultiplier: 1.0 },
+  { label: 'Les jetés', slug: 'jets-de-canap', center: { x: 0.13, y: 0.68 }, zoomMultiplier: 1.0 },
   { label: 'Les vases', slug: 'vases-dcoratifs', center: { x: 0.42, y: 0.5 }, zoomMultiplier: 1.2 },
-  { label: 'La plante', slug: 'pots-avec-plantes', center: { x: 0.58, y: 0.48 }, zoomMultiplier: 0.95 },
+  { label: 'Pots et plantes', slug: 'pots-avec-plantes', center: { x: 0.58, y: 0.48 }, zoomMultiplier: 0.95 },
   { label: 'L’art de la table', slug: 'services-par-set', center: { x: 0.83, y: 0.62 }, zoomMultiplier: 0.85 },
 ]
 

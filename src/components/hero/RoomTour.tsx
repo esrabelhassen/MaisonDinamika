@@ -264,29 +264,37 @@ export default function RoomTour({ locale, eyebrow, headline, sub, ctaLabel, cta
           style={{ backgroundImage: `url(${COLOR_URL})` }}
         />
 
-        {/* Dark scrim behind the copy only — the photo keeps panning underneath
-            it, so (unlike the dish hero's steadier backdrop) contrast can't
-            rely on any one fixed region always being light. */}
+        {/* Light scrim behind the copy only — the photo keeps panning underneath
+            it, so (unlike the dish hero's steadier backdrop) contrast can't rely
+            on any one fixed region always being a given brightness. Copy text is
+            now dark (`ink`), so this washes the area LIGHT rather than dark (it
+            used to darken, for the light text this replaced) — sized/positioned
+            the same as before, just recolored+strengthened. 0.68 alpha of
+            `paper` was contrast-checked (sRGB relative luminance) against the
+            worst case, a near-black patch of the photo sitting directly behind
+            it: blend ≈ rgb(162,158,150), `ink` text on that is ≈5.6:1, clearing
+            the 4.5:1 AA floor with real margin (0.55 alpha measured ~4.0:1 there
+            — a genuine near-miss caught by checking rather than eyeballing). */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 z-[1]"
           style={{
-            background: 'radial-gradient(ellipse 62% 46% at center, rgba(42,38,32,0.4) 0%, rgba(42,38,32,0) 72%)',
+            background: 'radial-gradient(ellipse 62% 46% at center, rgba(238,232,220,0.68) 0%, rgba(238,232,220,0) 72%)',
           }}
         />
 
         <div className="relative z-[2] grid h-full place-items-center">
           <div className="px-6 text-center">
             {eyebrow && (
-              <div className="mb-4 text-base uppercase tracking-[0.28em] text-paper sm:text-lg">{eyebrow}</div>
+              <div className="mb-4 text-base uppercase tracking-[0.28em] text-ink sm:text-lg">{eyebrow}</div>
             )}
             {headline && (
-              <h1 className="font-display text-[clamp(30px,5vw,60px)] font-normal leading-[0.98] tracking-tight text-paper">
+              <h1 className="font-display text-[clamp(30px,5vw,60px)] font-normal leading-[0.98] tracking-tight text-ink">
                 {renderHeadline(headline)}
               </h1>
             )}
             {sub && (
-              <p className="mx-auto mt-5 max-w-[34ch] text-lg leading-relaxed text-paper/85 sm:text-xl">{sub}</p>
+              <p className="mx-auto mt-5 max-w-[34ch] text-lg leading-relaxed text-ink/80 sm:text-xl">{sub}</p>
             )}
             {ctaLabel && ctaLink && (
               <div className="pointer-events-auto mt-7">
