@@ -78,3 +78,24 @@
     opacity: 1;
   }
 }
+
+/* NouveauteHeading's continuous "sheen" (src/components/home/NouveauteHeading.tsx):
+   animates the background-position of a semi-transparent gold gradient, clipped
+   to text and mix-blended over a separate SOLID ink heading underneath (never the
+   readable text's own color — see that component's doc comment for the contrast
+   reasoning), so a soft highlight periodically sweeps through the "Nouveauté"
+   lettering. Rests well outside the text's visible band for most of each 6s cycle
+   (0%–15% and 55%–100% both sit at an end position) so it reads as an occasional
+   flash of light, not a constant shimmering gimmick. Component swaps to a plain
+   static heading entirely for prefers-reduced-motion rather than freezing this
+   mid-sweep. */
+@keyframes nouveaute-shimmer {
+  0%,
+  15% {
+    background-position: 160% 0;
+  }
+  55%,
+  100% {
+    background-position: -60% 0;
+  }
+}

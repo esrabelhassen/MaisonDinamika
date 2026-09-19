@@ -1,6 +1,7 @@
 import type { Locale } from '@/lib/i18n'
 import CatalogCard from '@/components/catalog/CatalogCard'
 import type { CatalogCardItem, CatalogCardLabels } from '@/components/catalog/CatalogCard'
+import NouveauteHeading from './NouveauteHeading'
 
 export type NouveauteItem = CatalogCardItem
 
@@ -22,7 +23,7 @@ export default function Nouveaute({
   return (
     <section className="relative z-[2] bg-paper px-6 py-24">
       <div className="mx-auto max-w-6xl">
-        {heading && <h2 className="font-display text-3xl text-ink sm:text-4xl">{heading}</h2>}
+        {heading && <NouveauteHeading heading={heading} />}
 
         <div className="mt-12 grid grid-cols-2 gap-x-6 gap-y-12 lg:grid-cols-4">
           {items.map((item) => (
