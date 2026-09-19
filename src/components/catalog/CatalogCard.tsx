@@ -18,6 +18,10 @@ export type CatalogCardItem = {
   stock: number
   imageUrl: string | null
   imageAlt: string
+  /** The product/set's second gallery image, if it has one — swapped in on
+   * hover (see the card's image stack below). null just means "only one
+   * photo", not an error; the card falls back to its plain zoom-on-hover. */
+  hoverImageUrl: string | null
 }
 
 export type CatalogCardLabels = {
@@ -89,7 +93,27 @@ export default function CatalogCard({
               alt={item.imageAlt}
               fill
               sizes="(min-width: 1024px) 25vw, 50vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+              className={`object-cover transition-all duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100 ${
+                // Only fade the base photo out on hover when there's a second
+                // one underneath to reveal — otherwise this would hover-fade
+                // to nothing on single-image products/sets.
+                item.hoverImageUrl ? 'group-hover:opacity-0' : ''
+              }`}
+            />
+          )}
+          {/* Second gallery photo, stacked beneath the first and crossfaded in
+              on hover — a null hoverImageUrl (product/set has only one image)
+              means this simply never renders, so single-image cards keep the
+              plain zoom-only hover above unchanged. aria-hidden: decorative,
+              the link's accessible name already comes from item.name below. */}
+          {item.hoverImageUrl && (
+            <Image
+              aria-hidden
+              src={item.hoverImageUrl}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              className="object-cover opacity-0 transition-opacity duration-500 group-hover:opacity-100 motion-reduce:transition-none"
             />
           )}
           {/* Cursor-tracked spotlight — a premium whisper, not a spectacle: a soft

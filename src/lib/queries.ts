@@ -2,7 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import type { Locale } from '@/lib/i18n'
 import type { Category, Product, Set, SousCategory } from '@/payload-types'
-import { allGalleryImages, collectionBandImages, firstCardImage, resolveVariants } from '@/lib/media'
+import { allGalleryImages, collectionBandImages, firstCardImage, resolveVariants, secondCardImage } from '@/lib/media'
 import type { BandImage, ImageRef, VariantGroups } from '@/lib/media'
 import type { CatalogCardItem } from '@/components/catalog/CatalogCard'
 
@@ -16,6 +16,7 @@ async function client() {
 
 export function toCatalogItem(kind: 'product' | 'set', doc: Product | Set): CatalogCardItem {
   const image = firstCardImage(doc.images, doc.name)
+  const hoverImage = secondCardImage(doc.images, doc.name)
   return {
     kind,
     id: doc.id,
@@ -25,6 +26,7 @@ export function toCatalogItem(kind: 'product' | 'set', doc: Product | Set): Cata
     stock: doc.stock,
     imageUrl: image?.url ?? null,
     imageAlt: image?.alt ?? doc.name,
+    hoverImageUrl: hoverImage?.url ?? null,
   }
 }
 

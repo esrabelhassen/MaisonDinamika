@@ -20,6 +20,21 @@ export function firstCardImage(
   return { url, alt: first.alt || fallbackAlt }
 }
 
+/** Second image of a Products/Sets `images` array, sized like `firstCardImage` —
+ * used for the catalog card's hover swap (see CatalogCard.tsx). Returns null
+ * when the product/set has only one image (or none), which is exactly what
+ * "don't swap on hover" means there — no separate flag needed. */
+export function secondCardImage(
+  images: { image: number | Media }[] | null | undefined,
+  fallbackAlt: string,
+): ImageRef | null {
+  const second = images?.[1]?.image
+  if (!isMediaDoc(second)) return null
+  const url = second.sizes?.card?.url ?? second.url
+  if (!url) return null
+  return { url, alt: second.alt || fallbackAlt }
+}
+
 /** All images of a Products/Sets `images` array, sized for a full-size gallery view. */
 export function allGalleryImages(
   images: { image: number | Media }[] | null | undefined,
