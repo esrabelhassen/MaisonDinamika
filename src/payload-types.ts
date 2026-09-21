@@ -385,6 +385,10 @@ export interface Product {
            * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
            */
           image?: (number | null) | Media;
+          /**
+           * Facultatif — remplace le prix affiché quand le client sélectionne cette option (ex. un pack avec plus de pièces). Laisser vide pour garder le prix de base.
+           */
+          priceTND?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -395,6 +399,10 @@ export interface Product {
            * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
            */
           image?: (number | null) | Media;
+          /**
+           * Facultatif — remplace le prix affiché quand le client sélectionne cette option (ex. un pack avec plus de pièces). Laisser vide pour garder le prix de base.
+           */
+          priceTND?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -405,6 +413,10 @@ export interface Product {
            * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
            */
           image?: (number | null) | Media;
+          /**
+           * Facultatif — remplace le prix affiché quand le client sélectionne cette option (ex. un pack avec plus de pièces). Laisser vide pour garder le prix de base.
+           */
+          priceTND?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -466,6 +478,10 @@ export interface Set {
            * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
            */
           image?: (number | null) | Media;
+          /**
+           * Facultatif — remplace le prix affiché quand le client sélectionne cette option (ex. un pack avec plus de pièces). Laisser vide pour garder le prix de base.
+           */
+          priceTND?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -476,6 +492,10 @@ export interface Set {
            * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
            */
           image?: (number | null) | Media;
+          /**
+           * Facultatif — remplace le prix affiché quand le client sélectionne cette option (ex. un pack avec plus de pièces). Laisser vide pour garder le prix de base.
+           */
+          priceTND?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -486,6 +506,10 @@ export interface Set {
            * Facultatif — l’image affichée quand le client sélectionne cette option. Laisser vide si elle ne change pas la photo.
            */
           image?: (number | null) | Media;
+          /**
+           * Facultatif — remplace le prix affiché quand le client sélectionne cette option (ex. un pack avec plus de pièces). Laisser vide pour garder le prix de base.
+           */
+          priceTND?: number | null;
           id?: string | null;
         }[]
       | null;
@@ -857,6 +881,7 @@ export interface ProductsSelect<T extends boolean = true> {
           | {
               label?: T;
               image?: T;
+              priceTND?: T;
               id?: T;
             };
         dimensions?:
@@ -864,6 +889,7 @@ export interface ProductsSelect<T extends boolean = true> {
           | {
               label?: T;
               image?: T;
+              priceTND?: T;
               id?: T;
             };
         packs?:
@@ -871,6 +897,7 @@ export interface ProductsSelect<T extends boolean = true> {
           | {
               label?: T;
               image?: T;
+              priceTND?: T;
               id?: T;
             };
       };
@@ -910,6 +937,7 @@ export interface SetsSelect<T extends boolean = true> {
           | {
               label?: T;
               image?: T;
+              priceTND?: T;
               id?: T;
             };
         dimensions?:
@@ -917,6 +945,7 @@ export interface SetsSelect<T extends boolean = true> {
           | {
               label?: T;
               image?: T;
+              priceTND?: T;
               id?: T;
             };
         packs?:
@@ -924,6 +953,7 @@ export interface SetsSelect<T extends boolean = true> {
           | {
               label?: T;
               image?: T;
+              priceTND?: T;
               id?: T;
             };
       };

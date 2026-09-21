@@ -3,9 +3,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { isValidLocale, getNavDict } from '@/lib/i18n'
 import { getProductBySlug } from '@/lib/queries'
 import type { ProductDetail } from '@/lib/queries'
-import { formatPriceTND } from '@/lib/price'
 import ProductDetailLayout from '@/components/product/ProductDetailLayout'
-import AddToCart from '@/components/cart/AddToCart'
 
 type Params = { locale: string; slug: string }
 
@@ -47,40 +45,37 @@ export default async function ProductPage({ params }: { params: Promise<Params> 
         altFallback={product.name}
         variants={product.variants}
         labels={{ couleurs: nav.varianteCouleur, dimensions: nav.varianteDimension, packs: nav.variantePack }}
-        belowVariants={
-          <div className="mt-8">
-            <AddToCart
-              itemType="product"
-              id={product.id}
-              slug={product.slug}
-              name={product.name}
-              priceTND={product.priceTND}
-              image={product.images[0]?.url ?? null}
-              maxStock={product.stock}
-              labels={{
-                add: nav.ajouterAuPanier,
-                outOfStock: nav.ruptureDeStock,
-                added: nav.ajouteAuPanier,
-                decrease: nav.diminuerQuantite,
-                increase: nav.augmenterQuantite,
-              }}
-            />
-          </div>
+        basePriceTND={product.priceTND}
+        title={<h1 className="font-display text-3xl text-ink sm:text-4xl">{product.name}</h1>}
+        details={
+          <>
+            {product.stock <= 0 && (
+              <p className="mt-2 text-sm text-rim-brown">{nav.ruptureDeStock}</p>
+            )}
+
+            {product.description && (
+              <div className="prose prose-neutral mt-8 max-w-none text-muted">
+                <RichText data={product.description} />
+              </div>
+            )}
+          </>
         }
-      >
-        <h1 className="font-display text-3xl text-ink sm:text-4xl">{product.name}</h1>
-        <div className="mt-3 text-xl text-glaze">{formatPriceTND(product.priceTND)}</div>
-
-        {product.stock <= 0 && (
-          <p className="mt-2 text-sm text-rim-brown">{nav.ruptureDeStock}</p>
-        )}
-
-        {product.description && (
-          <div className="prose prose-neutral mt-8 max-w-none text-muted">
-            <RichText data={product.description} />
-          </div>
-        )}
-      </ProductDetailLayout>
+        addToCart={{
+          itemType: 'product',
+          id: product.id,
+          slug: product.slug,
+          name: product.name,
+          image: product.images[0]?.url ?? null,
+          maxStock: product.stock,
+          labels: {
+            add: nav.ajouterAuPanier,
+            outOfStock: nav.ruptureDeStock,
+            added: nav.ajouteAuPanier,
+            decrease: nav.diminuerQuantite,
+            increase: nav.augmenterQuantite,
+          },
+        }}
+      />
     </div>
   )
 }

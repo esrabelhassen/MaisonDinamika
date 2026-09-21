@@ -4,9 +4,7 @@ import { RichText } from '@payloadcms/richtext-lexical/react'
 import { isValidLocale, getNavDict, paths } from '@/lib/i18n'
 import { getSetBySlug } from '@/lib/queries'
 import type { SetDetail } from '@/lib/queries'
-import { formatPriceTND } from '@/lib/price'
 import ProductDetailLayout from '@/components/product/ProductDetailLayout'
-import AddToCart from '@/components/cart/AddToCart'
 
 type Params = { locale: string; slug: string }
 
@@ -48,64 +46,66 @@ export default async function SetPage({ params }: { params: Promise<Params> }) {
         altFallback={set.name}
         variants={set.variants}
         labels={{ couleurs: nav.varianteCouleur, dimensions: nav.varianteDimension, packs: nav.variantePack }}
-        belowVariants={
-          <div className="mt-8">
-            <AddToCart
-              itemType="set"
-              id={set.id}
-              slug={set.slug}
-              name={set.name}
-              priceTND={set.priceTND}
-              image={set.images[0]?.url ?? null}
-              maxStock={set.stock}
-              labels={{
-                add: nav.ajouterAuPanier,
-                outOfStock: nav.ruptureDeStock,
-                added: nav.ajouteAuPanier,
-                decrease: nav.diminuerQuantite,
-                increase: nav.augmenterQuantite,
-              }}
-            />
-          </div>
+        basePriceTND={set.priceTND}
+        title={
+          <h1 className="font-display text-3xl text-ink sm:text-4xl">
+            {set.name}{' '}
+            <span className="ms-3 align-middle rounded-sm bg-glaze-light px-2 py-1 text-sm font-normal text-glaze-dark">
+              {nav.ensemble}
+            </span>
+          </h1>
         }
-      >
-        <h1 className="font-display text-3xl text-ink sm:text-4xl">
-          {set.name}{' '}
-          <span className="ms-3 align-middle rounded-sm bg-glaze-light px-2 py-1 text-sm font-normal text-glaze-dark">
-            {nav.ensemble}
-          </span>
-        </h1>
-        {/* This uses the SET's own price/stock — deliberately independent of the
-            sum of its components' prices/stock (see Sets.ts). */}
-        <div className="mt-3 text-xl text-glaze">{formatPriceTND(set.priceTND)}</div>
+        details={
+          <>
+            {set.stock <= 0 && <p className="mt-2 text-sm text-rim-brown">{nav.ruptureDeStock}</p>}
 
-        {set.stock <= 0 && <p className="mt-2 text-sm text-rim-brown">{nav.ruptureDeStock}</p>}
+            {set.description && (
+              <div className="prose prose-neutral mt-8 max-w-none text-muted">
+                <RichText data={set.description} />
+              </div>
+            )}
 
-        {set.description && (
-          <div className="prose prose-neutral mt-8 max-w-none text-muted">
-            <RichText data={set.description} />
-          </div>
-        )}
-
-        {set.components.length > 0 && (
-          <div className="mt-8 rounded-2xl border border-line bg-surface/40 p-7">
-            <h2 className="font-display text-lg text-ink">{nav.contenuDeLEnsemble}</h2>
-            <ul className="mt-4 flex flex-col gap-3">
-              {set.components.map((component) => (
-                <li key={component.product.id}>
-                  <Link
-                    href={paths.produit(locale, component.product.slug)}
-                    className="flex items-baseline gap-2 rounded-sm text-sm hover:text-glaze-deep"
-                  >
-                    <span className="font-medium text-ink">{component.qty} ×</span>
-                    <span className="text-muted">{component.product.name}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </ProductDetailLayout>
+            {set.components.length > 0 && (
+              <div className="mt-8 rounded-2xl border border-line bg-surface/40 p-7">
+                <h2 className="font-display text-lg text-ink">{nav.contenuDeLEnsemble}</h2>
+                <ul className="mt-4 flex flex-col gap-3">
+                  {set.components.map((component) => (
+                    <li key={component.product.id}>
+                      <Link
+                        href={paths.produit(locale, component.product.slug)}
+                        className="flex items-baseline gap-2 rounded-sm text-sm hover:text-glaze-deep"
+                      >
+                        <span className="font-medium text-ink">{component.qty} ×</span>
+                        <span className="text-muted">{component.product.name}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </>
+        }
+        // AddToCart's price can now reflect a selected variant's own price —
+        // the base set price still comes from Sets.ts's own field,
+        // independent of its components' prices, as before; only what's
+        // shown/added at checkout time can differ once a variant with a
+        // price is picked (see ProductDetailLayout.tsx).
+        addToCart={{
+          itemType: 'set',
+          id: set.id,
+          slug: set.slug,
+          name: set.name,
+          image: set.images[0]?.url ?? null,
+          maxStock: set.stock,
+          labels: {
+            add: nav.ajouterAuPanier,
+            outOfStock: nav.ruptureDeStock,
+            added: nav.ajouteAuPanier,
+            decrease: nav.diminuerQuantite,
+            increase: nav.augmenterQuantite,
+          },
+        }}
+      />
     </div>
   )
 }

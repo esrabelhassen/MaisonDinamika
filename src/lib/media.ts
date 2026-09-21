@@ -73,7 +73,7 @@ export function resolveLogo(
   return { url, alt: logo.alt || brandName, width, height, isSvg }
 }
 
-export type VariantOption = { label: string; image: ImageRef | null }
+export type VariantOption = { label: string; image: ImageRef | null; priceTND: number | null }
 export type VariantGroups = { couleurs: VariantOption[]; dimensions: VariantOption[]; packs: VariantOption[] }
 
 // Products' and Sets' `variants` group has an identical shape (see
@@ -83,9 +83,10 @@ type VariantRow = NonNullable<NonNullable<Product['variants']>['couleurs']>[numb
 
 function resolveVariantOptions(rows: VariantRow[] | null | undefined): VariantOption[] {
   return (rows ?? []).map((row) => {
-    if (!isMediaDoc(row.image)) return { label: row.label, image: null }
+    const priceTND = typeof row.priceTND === 'number' ? row.priceTND : null
+    if (!isMediaDoc(row.image)) return { label: row.label, image: null, priceTND }
     const url = row.image.sizes?.hero?.url ?? row.image.url
-    return { label: row.label, image: url ? { url, alt: row.image.alt || row.label } : null }
+    return { label: row.label, image: url ? { url, alt: row.image.alt || row.label } : null, priceTND }
   })
 }
 
