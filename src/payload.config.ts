@@ -52,12 +52,19 @@ export default buildConfig({
     vercelBlobStorage({
       collections: { media: true },
       token: process.env.BLOB_READ_WRITE_TOKEN,
-      // Vercel's serverless functions cap request bodies at 4.5MB — routing the
-      // upload itself through the function (the default) means anything bigger
-      // than that fails with "Your request was too large to submit
-      // successfully." This uploads straight from the browser to Vercel Blob
-      // instead, bypassing that function-body limit entirely.
-      clientUploads: true,
+      // `clientUploads: true` (browser uploads straight to Blob storage,
+      // bypassing Vercel's 4.5MB serverless function body cap) was tried
+      // first, but a live audit of every uploaded photo found ~36% had
+      // silently failed — the admin shows the upload as successful and
+      // creates the Media doc, but the file itself never actually lands in
+      // storage, so it 404s on the live site with no warning anywhere. That
+      // failure mode is worse than the size cap it was meant to avoid: every
+      // real product photo uploaded so far has been well under 1MB, so
+      // routing uploads through the server instead (the default) trades an
+      // essentially theoretical size limit for actually-reliable uploads —
+      // and if a photo ever does exceed 4.5MB, THAT fails loudly and
+      // immediately in the admin instead of silently on the storefront days
+      // later. `clientUploads` left unset here (defaults to false/off).
     }),
   ],
 })
